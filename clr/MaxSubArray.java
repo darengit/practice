@@ -12,21 +12,30 @@ public class MaxSubArray {
 		assert maxSubSumLinear(new int[] {-1,1,-2,2,-3,3,4,-5,6,-7}) == 8;
 		assert maxSubSumLinear(new int[] {-5,-1,-4,-2,-3}) == 0;
 
-		int[] lengths = new int[] {10, 100, 1000, 10000, 100000};
+		int[] lengths = new int[] {1000, 10000, 100000, 200000};
 
 		for (int length: lengths) {
-			int[] random = RandomArray.randomArray(length, -999, 999);
+			int[] random = RandomArray.randomArray(length, -999999, 999999);
+			long start = System.currentTimeMillis();
 			int brute = maxSubSum(random);
+			long bruteFinish = System.currentTimeMillis();
 			int nlogn = maxSubSumNLogN(random);
+			long nlognFinish = System.currentTimeMillis();
 			int linear = maxSubSumLinear(random);
+			long linearFinish = System.currentTimeMillis();
 
+			System.out.println("Array size: " + String.valueOf(length));
+			System.out.println("Brute  : " + String.valueOf(bruteFinish-start) + "ms");
+			System.out.println("NLogN  : " + String.valueOf(nlognFinish-bruteFinish) + "ms");
+			System.out.println("Linear : " + String.valueOf(linearFinish-nlognFinish) + "ms");
+			
 			assert brute==nlogn && nlogn==linear;
 		}
 
 		System.out.println("all asserts passed");
 	}
 
-	private static int maxSubSum(int[] nums) {
+	public static int maxSubSum(int[] nums) {
 		int maxSubSum = 0;
 		for (int i=0; i<nums.length; i++) {
 			int iStartMax = 0;
@@ -38,7 +47,7 @@ public class MaxSubArray {
 		return maxSubSum;  
   	}
 
-	private static int maxSubSumNLogN(int[] nums) {
+	public static int maxSubSumNLogN(int[] nums) {
 		if (nums.length == 0)
 			return 0;
 		return maxSubSum(nums, 0, nums.length-1);
@@ -76,7 +85,7 @@ public class MaxSubArray {
 		return maxSubSum;
 	}
 
-	private static int maxSubSumLinear(int[] nums) {
+	public static int maxSubSumLinear(int[] nums) {
 		int minFromLeft = 0;
 		int sumFromLeft = 0;
 		int maxSoFar = 0;
