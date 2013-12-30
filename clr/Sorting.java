@@ -77,12 +77,8 @@ public class Sorting {
 
 	public static void heapSort(int[] nums) {
 		heapCreate(nums);
-
 		for (int i=nums.length-1; i>0; i--) {
-			int tmp = nums[i];
-			nums[i] = nums[0];
-			nums[0] = tmp;
-
+			ArrayUtil.swap(nums, 0, i);
 			heapPropagateNode(nums, i, 0);
 		}
 	}
@@ -107,11 +103,7 @@ public class Sorting {
 		} else if (rightChildIndex > length-1) {
 			heapTestSwapPropagate(nums, length, index, leftChildIndex);
 		} else {
-			int node = nums[index];
-			int left = nums[leftChildIndex];
-			int right = nums[rightChildIndex];
-
-			if (left > right) {
+			if (nums[leftChildIndex] > nums[rightChildIndex]) {
 				heapTestSwapPropagate(nums, length, index, leftChildIndex);
 			} else {
 				heapTestSwapPropagate(nums, length, index, rightChildIndex);
@@ -121,10 +113,7 @@ public class Sorting {
 
 	private static void heapTestSwapPropagate(int[] nums, int length, int parent, int child) {
 		if (nums[parent] < nums[child]) {
-			int tmp = nums[parent];
-			nums[parent] = nums[child];
-			nums[child] = tmp;
-
+			ArrayUtil.swap(nums, parent, child);
 			heapPropagateNode(nums, length, child);
 		} else {
 			return;
@@ -143,9 +132,7 @@ public class Sorting {
 		Random rand = new Random(System.currentTimeMillis());
 		int randomIndex = rand.nextInt(end-start+1) + start;
 
-		int tmp = nums[randomIndex];
-		nums[randomIndex] = nums[end];
-		nums[end] = tmp;
+		ArrayUtil.swap(nums, randomIndex, end);
 
 /*
  * we will iterate over nums[start:end] and modify nums
@@ -158,37 +145,30 @@ public class Sorting {
 		while (index < end) {
 			if (nums[index] < nums[end]) {
 				ltpIndex++;
-				int indexValue = nums[index];
-				nums[index] = nums[ltpIndex];
-				nums[ltpIndex] = indexValue;
+				ArrayUtil.swap(nums, index, ltpIndex);
 			}
 			index++;
 		}
 
-		int pivotIndex = ltpIndex+1;
-		int pivotIndexValue = nums[pivotIndex];
-		nums[pivotIndex] = nums[end];
-		nums[end] = pivotIndexValue;
+		ArrayUtil.swap(nums, ltpIndex+1, end);
 
 		quickSort(nums, start, ltpIndex);
-		quickSort(nums, pivotIndex+1, end);
+		quickSort(nums, ltpIndex+2, end);
 	}
 
 	public static void quickSortDups(int[] nums) {
 		quickSortDups(nums, 0, nums.length-1);
 	}
 
-    private static void quickSortDups(int[] nums, int start, int end) {
-        if (end <= start) {
-            return;
-        }
+	private static void quickSortDups(int[] nums, int start, int end) {
+		if (end <= start) {
+			return;
+		}
 
-        Random rand = new Random(System.currentTimeMillis());
-        int randomIndex = rand.nextInt(end-start+1) + start;
+		Random rand = new Random(System.currentTimeMillis());
+		int randomIndex = rand.nextInt(end-start+1) + start;
 
-        int tmp = nums[randomIndex];
-        nums[randomIndex] = nums[end];
-        nums[end] = tmp;
+		ArrayUtil.swap(nums, randomIndex, end);
 
 /*
  * we will iterate over nums[start:end] and modify nums
@@ -196,37 +176,30 @@ public class Sorting {
  * nums[ltpIndex+1:etpIndex] are values 'equal to pivot' or etp for short
  * nums[etpIndex+1:index-1] are values 'greater than pivot'
  */
-        int ltpIndex = start-1;
+		int ltpIndex = start-1;
 		int etpIndex = start-1;
-        int index = start;
+		int index = start;
 
-        while (index < end) {
-            if (nums[index] < nums[end]) {
-                ltpIndex++;
+		while (index < end) {
+			if (nums[index] < nums[end]) {
+				ltpIndex++;
 				etpIndex++;
-                int indexValue = nums[index];
-                nums[index] = nums[ltpIndex];
-                nums[ltpIndex] = indexValue;
+				ArrayUtil.swap(nums, index, ltpIndex);
 				if (nums[index] == nums[end]) {
-					int etpValue = nums[etpIndex];
-					nums[etpIndex] = nums[index];
-					nums[index] = etpValue;
+					ArrayUtil.swap(nums, index, etpIndex);
 				}
-            } else if (nums[index] == nums[end]) {
+			} else if (nums[index] == nums[end]) {
 				etpIndex++;
 				int etpValue = nums[etpIndex];
 				nums[etpIndex] = nums[index];
 				nums[index] = etpValue;
 			}
-            index++;
-        }
+			index++;
+		}
 
-        int pivotIndex = etpIndex+1;
-        int pivotIndexValue = nums[pivotIndex];
-        nums[pivotIndex] = nums[end];
-        nums[end] = pivotIndexValue;
+		ArrayUtil.swap(nums, ++etpIndex, end);
 
-        quickSort(nums, start, ltpIndex);
-        quickSort(nums, pivotIndex+1, end);
-    }
+		quickSort(nums, start, ltpIndex);
+		quickSort(nums, etpIndex+1, end);
+	}
 }
