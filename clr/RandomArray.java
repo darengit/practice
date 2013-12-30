@@ -1,7 +1,7 @@
 import java.util.Random;
 
 public class RandomArray {
-	private static Random rand = new Random();
+	private static Random rand = new Random(System.currentTimeMillis());
 
 	public static int[] randomArray(int length, int min, int max) {
 		int[] random = new int[length];
