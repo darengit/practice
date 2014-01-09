@@ -1,3 +1,5 @@
+package practice.cc;
+
 public class SingletonTest {
 	public static void main(String[] args) {
 		Singleton x = Singleton.getSingleton();

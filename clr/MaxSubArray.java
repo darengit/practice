@@ -1,3 +1,7 @@
+package practice.clr;
+
+import practice.util.ArrayUtil;
+
 public class MaxSubArray {
 	public static void main(String[] args) {
 		assert maxSubSum(new int[] {}) == 0;

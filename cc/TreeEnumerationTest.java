@@ -1,5 +1,8 @@
-import practice.util.TreeNode;
+package practice.cc;
+
 import java.util.Enumeration;
+
+import practice.util.TreeNode;
 
 /*
  * i implemented the java.util.Enumeration interface with different

@@ -1,3 +1,5 @@
+package practice.cc;
+
 public class Singleton {
 	private static Singleton singleton;
 

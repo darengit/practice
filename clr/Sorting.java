@@ -1,5 +1,9 @@
+package practice.clr;
+
 import java.util.Arrays;
 import java.util.Random;
+
+import practice.util.ArrayUtil;
 
 public class Sorting {
 	private static boolean sorted(int[] nums) {

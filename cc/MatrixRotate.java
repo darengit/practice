@@ -1,3 +1,5 @@
+package practice.cc;
+
 public class MatrixRotate {
 	public static void main(String[] args) {
 /*

@@ -1,6 +1,9 @@
+package practice.cc;
+
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 import java.util.Stack;
+
 import practice.util.TreeNode;
 
 public class InOrderTreeEnumeration implements Enumeration<TreeNode> {

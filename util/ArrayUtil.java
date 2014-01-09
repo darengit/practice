@@ -1,3 +1,5 @@
+package practice.util;
+
 public class ArrayUtil {
 	public static void swap(int[] nums, int i, int j) {
 		int tmp = nums[i];

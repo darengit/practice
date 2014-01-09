@@ -1,3 +1,5 @@
+package practice.clr;
+
 import java.util.Random;
 
 public class RandomArray {
