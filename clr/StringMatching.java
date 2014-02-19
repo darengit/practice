@@ -82,9 +82,7 @@ public class StringMatching {
 
 	private static Set<Integer> transitionState(Set<Integer> state, String find, char currChar) {
 		Set<Integer> newState = new HashSet<Integer>();
-		Iterator<Integer> iter = state.iterator();
-		while(iter.hasNext()) {
-			Integer matchSoFar = iter.next();
+		for (Integer matchSoFar : state) {
 			if (currChar == find.charAt(matchSoFar.intValue()))
 				newState.add(new Integer(matchSoFar+1));
 		}
