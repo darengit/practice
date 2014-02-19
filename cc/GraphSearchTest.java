@@ -6,15 +6,15 @@ import practice.util.GraphNode;
 
 public class GraphSearchTest {
 	public static void main(String[] args) {
-		GraphNode single = new GraphNode(new Integer(0));
+		GraphNode<Integer> single = new GraphNode<Integer>(new Integer(0));
 
-		GraphNode zero  = new GraphNode(new Integer(0));
-		GraphNode one   = new GraphNode(new Integer(1));
-		GraphNode two   = new GraphNode(new Integer(2));
-		GraphNode three = new GraphNode(new Integer(3));
-		GraphNode four  = new GraphNode(new Integer(4));
-		GraphNode five  = new GraphNode(new Integer(5));
-		GraphNode six   = new GraphNode(new Integer(6));
+		GraphNode<Integer> zero  = new GraphNode<Integer>(new Integer(0));
+		GraphNode<Integer> one   = new GraphNode<Integer>(new Integer(1));
+		GraphNode<Integer> two   = new GraphNode<Integer>(new Integer(2));
+		GraphNode<Integer> three = new GraphNode<Integer>(new Integer(3));
+		GraphNode<Integer> four  = new GraphNode<Integer>(new Integer(4));
+		GraphNode<Integer> five  = new GraphNode<Integer>(new Integer(5));
+		GraphNode<Integer> six   = new GraphNode<Integer>(new Integer(6));
 
 		zero.neighbors.add(one);
 		zero.neighbors.add(two);
@@ -38,7 +38,7 @@ public class GraphSearchTest {
 
 		five.neighbors.add(three);
 
-		GraphSearch dfsSearch = new DepthFirstGraphSearch();
+		GraphSearch<GraphNode<Integer>,Integer> dfsSearch = new DepthFirstGraphSearch<Integer>();
 
 		assert !dfsSearch.searchGraph(null, null);
 
@@ -56,7 +56,7 @@ public class GraphSearchTest {
 			assert !dfsSearch.searchGraph(four, new Integer(6));
 		}
 
-		GraphSearch bfsSearch = new BreadthFirstGraphSearch();
+		GraphSearch<GraphNode<Integer>,Integer> bfsSearch = new BreadthFirstGraphSearch<Integer>();
 
 		assert !bfsSearch.searchGraph(null, null);
 

@@ -7,29 +7,27 @@ import java.util.Iterator;
 
 import practice.util.GraphNode;
 
-public class DepthFirstGraphSearch<V> implements GraphSearch<GraphNode, V> {
-	public boolean searchGraph(GraphNode start, V val) {
+public class DepthFirstGraphSearch<V> implements GraphSearch<GraphNode<V>, V> {
+	public boolean searchGraph(GraphNode<V> start, V val) {
 		if (start == null)
 			return false;
 
-		Set visited = new HashSet();
-		Stack<GraphNode> searchStack = new Stack<GraphNode>();
+		Set<GraphNode<V>> visited = new HashSet<GraphNode<V>>();
+		Stack<GraphNode<V>> searchStack = new Stack<GraphNode<V>>();
 
 		searchStack.push(start);
 
 		while (!searchStack.isEmpty()) {
-			GraphNode top = searchStack.pop();
+			GraphNode<V> top = searchStack.pop();
 
 			if (top.content.equals(val))
 				return true;
 
 			visited.add(top);
-			Iterator<GraphNode> neighborsIter = top.neighbors.iterator();
-			while (neighborsIter.hasNext()) {
-				GraphNode nextNeighbor = neighborsIter.next();
-				if (!visited.contains(nextNeighbor))
-					searchStack.push(nextNeighbor);
-			}	
+			for (GraphNode<V> neighbor : top.neighbors) {
+				if (!visited.contains(neighbor))
+					searchStack.push(neighbor);
+			}
 		}
 		return false;
 	}

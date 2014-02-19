@@ -6,12 +6,12 @@ import java.util.Stack;
 
 import practice.util.TreeNode;
 
-public class InOrderTreeEnumeration implements Enumeration<TreeNode> {
-	private Stack<TreeNode> enumStack;
+public class InOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
+	private Stack<TreeNode<T>> enumStack;
 
-	public InOrderTreeEnumeration(TreeNode root) {
-		enumStack = new Stack<TreeNode>();
-		TreeNode curr = root;
+	public InOrderTreeEnumeration(TreeNode<T> root) {
+		enumStack = new Stack<TreeNode<T>>();
+		TreeNode<T> curr = root;
 		while (curr != null) {
 			enumStack.push(curr);
 			curr = curr.left;
@@ -22,14 +22,14 @@ public class InOrderTreeEnumeration implements Enumeration<TreeNode> {
 		return !enumStack.empty();
 	}
 
-	public TreeNode nextElement() {
+	public TreeNode<T> nextElement() {
 		if (enumStack.empty())
 			throw new NoSuchElementException();
 
-		TreeNode next = enumStack.pop();
+		TreeNode<T> next = enumStack.pop();
 
 		if (next.right != null) {
-			TreeNode curr = next.right;
+			TreeNode<T> curr = next.right;
 			while (curr != null) {
 				enumStack.push(curr);
 				curr = curr.left;

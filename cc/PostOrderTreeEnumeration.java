@@ -9,15 +9,15 @@ import practice.util.TreeNode;
  * out of the traversals this one is particularly tricky
  */
 
-public class PostOrderTreeEnumeration implements Enumeration<TreeNode> {
-	private Stack<TreeNode> enumStack;
+public class PostOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
+	private Stack<TreeNode<T>> enumStack;
 
-	public PostOrderTreeEnumeration(TreeNode root) {
-		enumStack = new Stack<TreeNode>();
+	public PostOrderTreeEnumeration(TreeNode<T> root) {
+		enumStack = new Stack<TreeNode<T>>();
 		initializeTreeToStack(root);
 	}
 
-	private void initializeTreeToStack(TreeNode n) {
+	private void initializeTreeToStack(TreeNode<T> n) {
 		while (n != null) {
 			enumStack.push(n);
 			if (n.left != null)
@@ -33,14 +33,14 @@ public class PostOrderTreeEnumeration implements Enumeration<TreeNode> {
 		return !enumStack.empty();
 	}
 
-	public TreeNode nextElement() {
+	public TreeNode<T> nextElement() {
 		if (enumStack.empty())
 			throw new NoSuchElementException();
 
-		TreeNode next = enumStack.pop();
+		TreeNode<T> next = enumStack.pop();
 		if (enumStack.empty())
 			return next;
-		TreeNode nextNext = enumStack.peek();
+		TreeNode<T> nextNext = enumStack.peek();
 
 /* 
  * two possibilities

@@ -46,18 +46,17 @@ public class TreeEnumerationTest {
 	}
 
 	private static void testPreOrderTraversal(TreeNode<Integer> root) {
-		Enumeration enumerator = new PreOrderTreeEnumeration(root);
+		Enumeration<TreeNode<Integer>> enumerator = new PreOrderTreeEnumeration<Integer>(root);
 		printEnumeration(enumerator);
 	}
 
 	private static void testInOrderTraversal(TreeNode<Integer> root) {
-		Enumeration enumerator = new InOrderTreeEnumeration(root);
+		Enumeration<TreeNode<Integer>> enumerator = new InOrderTreeEnumeration<Integer>(root);
 		printEnumeration(enumerator);
 	}
 
 	private static void testPostOrderTraversal(TreeNode<Integer> root) {
-		Enumeration enumerator = new PostOrderTreeEnumeration(root);
+		Enumeration<TreeNode<Integer>> enumerator = new PostOrderTreeEnumeration<Integer>(root);
 		printEnumeration(enumerator);
 	}
-
 }

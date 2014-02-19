@@ -5,11 +5,11 @@ import java.util.NoSuchElementException;
 import java.util.Stack;
 import practice.util.TreeNode;
 
-public class PreOrderTreeEnumeration implements Enumeration<TreeNode> {
-	private Stack<TreeNode> enumStack;
+public class PreOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
+	private Stack<TreeNode<T>> enumStack;
 
-	public PreOrderTreeEnumeration(TreeNode root) {
-		enumStack = new Stack<TreeNode>();
+	public PreOrderTreeEnumeration(TreeNode<T> root) {
+		enumStack = new Stack<TreeNode<T>>();
 		if (root != null)
 			enumStack.push(root);
 	}
@@ -18,11 +18,11 @@ public class PreOrderTreeEnumeration implements Enumeration<TreeNode> {
 		return !enumStack.empty();
 	}
 
-	public TreeNode nextElement() {
+	public TreeNode<T> nextElement() {
 		if (enumStack.empty())
 			throw new NoSuchElementException();
 
-		TreeNode next = enumStack.pop();
+		TreeNode<T> next = enumStack.pop();
 
 		if (next.right != null)
 			enumStack.push(next.right);

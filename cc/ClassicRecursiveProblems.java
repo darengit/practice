@@ -43,9 +43,7 @@ public class ClassicRecursiveProblems {
 
 	private Set<String> setPrepend(Set<String> set, String str) {
 		Set<String> prepended = new HashSet<String>();
-		Iterator<String> iter = set.iterator();
-		while(iter.hasNext()) {
-			String elt = iter.next();
+		for (String elt : set) {
 			prepended.add(str+elt);
 		}
 		return prepended;
@@ -81,9 +79,8 @@ public class ClassicRecursiveProblems {
  */
 		Integer num = nums.first();
 		totalCombos.addAll(makeTotal(total-num, nums));
-		Iterator<Map<Integer,Integer>> iter = totalCombos.iterator();
-		while (iter.hasNext()) {
-			Map<Integer, Integer> combination = iter.next();
+
+		for (Map<Integer,Integer> combination : totalCombos) {
 			if (combination.containsKey(num))
 				combination.put(num, combination.get(num)+1);
 			else

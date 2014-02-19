@@ -7,28 +7,26 @@ import java.util.Iterator;
 
 import practice.util.GraphNode;
 
-public class BreadthFirstGraphSearch<V> implements GraphSearch<GraphNode, V> {
-	public boolean searchGraph(GraphNode start, V val) {
+public class BreadthFirstGraphSearch<V> implements GraphSearch<GraphNode<V>, V> {
+	public boolean searchGraph(GraphNode<V> start, V val) {
 		if (start == null)
 			return false;
 
-		Set visited = new HashSet();
-		LinkedList<GraphNode> searchQueue = new LinkedList<GraphNode>();
+		Set<GraphNode<V>> visited = new HashSet<GraphNode<V>>();
+		LinkedList<GraphNode<V>> searchQueue = new LinkedList<GraphNode<V>>();
 
 		searchQueue.add(start);
 
-		GraphNode head;
+		GraphNode<V> head;
 		while ((head=searchQueue.poll()) != null) {
 			if (head.content.equals(val))
 				return true;
 
 			visited.add(head);
-			Iterator<GraphNode> neighborsIter = head.neighbors.iterator();
-			while (neighborsIter.hasNext()) {
-				GraphNode nextNeighbor = neighborsIter.next();
-				if (!visited.contains(nextNeighbor))
-					searchQueue.add(nextNeighbor);
-			}	
+			for (GraphNode<V> neighbor : head.neighbors) {
+				if (!visited.contains(neighbor))
+					searchQueue.add(neighbor);
+			}
 		}
 		return false;
 	}
