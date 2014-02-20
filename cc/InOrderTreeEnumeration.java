@@ -6,7 +6,7 @@ import java.util.Stack;
 
 import practice.util.TreeNode;
 
-public class InOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
+public class InOrderTreeEnumeration<T> implements Enumeration<T> {
 	private Stack<TreeNode<T>> enumStack;
 
 	public InOrderTreeEnumeration(TreeNode<T> root) {
@@ -22,7 +22,7 @@ public class InOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
 		return !enumStack.empty();
 	}
 
-	public TreeNode<T> nextElement() {
+	public T nextElement() {
 		if (enumStack.empty())
 			throw new NoSuchElementException();
 
@@ -36,6 +36,6 @@ public class InOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
 			}
 		}
 
-		return next;
+		return next.content;
 	}
 }

@@ -37,26 +37,26 @@ public class TreeEnumerationTest {
 		testPostOrderTraversal(rootNode);
 	}
 
-	private static void printEnumeration(Enumeration<TreeNode<Integer>> e) {
+	private static void printEnumeration(Enumeration<Integer> e) {
 		while (e.hasMoreElements()) {
-			TreeNode<Integer> node = e.nextElement();
-			System.out.print(" " + node.content.toString() + " ");
+			Integer node = e.nextElement();
+			System.out.print(" " + node.toString() + " ");
 		}
 		System.out.println("");
 	}
 
 	private static void testPreOrderTraversal(TreeNode<Integer> root) {
-		Enumeration<TreeNode<Integer>> enumerator = new PreOrderTreeEnumeration<Integer>(root);
+		Enumeration<Integer> enumerator = new PreOrderTreeEnumeration<Integer>(root);
 		printEnumeration(enumerator);
 	}
 
 	private static void testInOrderTraversal(TreeNode<Integer> root) {
-		Enumeration<TreeNode<Integer>> enumerator = new InOrderTreeEnumeration<Integer>(root);
+		Enumeration<Integer> enumerator = new InOrderTreeEnumeration<Integer>(root);
 		printEnumeration(enumerator);
 	}
 
 	private static void testPostOrderTraversal(TreeNode<Integer> root) {
-		Enumeration<TreeNode<Integer>> enumerator = new PostOrderTreeEnumeration<Integer>(root);
+		Enumeration<Integer> enumerator = new PostOrderTreeEnumeration<Integer>(root);
 		printEnumeration(enumerator);
 	}
 }

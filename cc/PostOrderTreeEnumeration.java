@@ -9,7 +9,7 @@ import practice.util.TreeNode;
  * out of the traversals this one is particularly tricky
  */
 
-public class PostOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
+public class PostOrderTreeEnumeration<T> implements Enumeration<T> {
 	private Stack<TreeNode<T>> enumStack;
 
 	public PostOrderTreeEnumeration(TreeNode<T> root) {
@@ -33,13 +33,13 @@ public class PostOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
 		return !enumStack.empty();
 	}
 
-	public TreeNode<T> nextElement() {
+	public T nextElement() {
 		if (enumStack.empty())
 			throw new NoSuchElementException();
 
 		TreeNode<T> next = enumStack.pop();
 		if (enumStack.empty())
-			return next;
+			return next.content;
 		TreeNode<T> nextNext = enumStack.peek();
 
 /* 
@@ -53,6 +53,6 @@ public class PostOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
 			initializeTreeToStack(nextNext.right);
 		}
 
-		return next;
+		return next.content;
 	}
 }

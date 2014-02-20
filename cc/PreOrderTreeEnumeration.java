@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Stack;
 import practice.util.TreeNode;
 
-public class PreOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
+public class PreOrderTreeEnumeration<T> implements Enumeration<T> {
 	private Stack<TreeNode<T>> enumStack;
 
 	public PreOrderTreeEnumeration(TreeNode<T> root) {
@@ -18,7 +18,7 @@ public class PreOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
 		return !enumStack.empty();
 	}
 
-	public TreeNode<T> nextElement() {
+	public T nextElement() {
 		if (enumStack.empty())
 			throw new NoSuchElementException();
 
@@ -29,6 +29,6 @@ public class PreOrderTreeEnumeration<T> implements Enumeration<TreeNode<T>> {
 		if (next.left != null)
 			enumStack.push(next.left);
 
-		return next;
+		return next.content;
 	}
 }
