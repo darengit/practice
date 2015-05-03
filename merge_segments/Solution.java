@@ -9,28 +9,30 @@ import java.util.*;
 
 public class Solution {
   public static void main(String[] args) {
-    List<Segment> segmentsArray = new ArrayList<>();
-    segmentsArray.add(new Segment(0,3));
-    segmentsArray.add(new Segment(1,4));
-    segmentsArray.add(new Segment(10,13));
-    segmentsArray.add(new Segment(30,33));
-    segmentsArray.add(new Segment(30,31));
-    segmentsArray.add(new Segment(32,35));
-    List<Segment> mergedSegments = mergeSegments(segmentsArray);
+    List<Segment> segments = new ArrayList<>();
+    segments.add(new Segment(0,3));
+    segments.add(new Segment(1,4));
+    segments.add(new Segment(10,13));
+    segments.add(new Segment(30,33));
+    segments.add(new Segment(30,31));
+    segments.add(new Segment(32,35));
+    Set<Segment> mergedSegments = mergeSegments(segments);
 
     for (Segment mergedSegment: mergedSegments) {
       System.out.println(mergedSegment);
     }
   }
   
-  private static List<Segment> mergeSegments(List<Segment> segmentsArray){
-    List<Segment> mergedSegmentsSoFar = new ArrayList<>();
-    for (Segment segment: segmentsArray) {
+  private static Set<Segment> mergeSegments(List<Segment> segmentsList){
+    Set<Segment> mergedSegments = new HashSet<>();
+    for (Segment segment: segmentsList) {
       int mergedStart = segment.start;
       int mergedEnd = segment.end;
-      
+
+      // we iterate with an explicit iterator to mofidy mergedSegments
+      // while looping through it
       List<Segment> segmentsToMerge = new ArrayList<>();
-      Iterator<Segment> iter = mergedSegmentsSoFar.iterator();
+      Iterator<Segment> iter = mergedSegments.iterator();
       while(iter.hasNext()){
         Segment mergedSegment = iter.next();
         if (segment.overlap(mergedSegment)) {
@@ -46,11 +48,12 @@ public class Solution {
           mergedEnd = segmentToMerge.end;
       }
       
-      mergedSegmentsSoFar.add(new Segment(mergedStart, mergedEnd));
+      mergedSegments.add(new Segment(mergedStart, mergedEnd));
     }
-    return mergedSegmentsSoFar;
+    return mergedSegments;
   }
-  
+
+  // a static nested private class is for the simplicity of fitting into single file
   static private class Segment {
     public int start;
     public int end;
