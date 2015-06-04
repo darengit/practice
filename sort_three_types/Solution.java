@@ -11,69 +11,106 @@ import java.util.*;
 class Solution {
     public static void main(String[] args) {
         int[] test1 = {0,1,2,0,1,2,2,0,0,2,1,1,0};
-        sortThreeTypes(test1);
+        sortColors(test1);
         for (int num : test1)
             System.out.print(num);
         System.out.println("");
       
     }
 
-    public static void sortThreeTypes(int[] arr) {
-        int head = 0;
-        int tail = arr.length-1;
-      
-        boolean doneFromHead = false;
-        boolean doneFromTail = false;
-      
-        while (head < tail && !doneFromHead && !doneFromTail) {
-            System.out.println(head);
-            System.out.println(tail);
-            for (int num: arr)
-              System.out.print(num);
-            System.out.println("");
-            if (arr[head] == 0)
-                head++;
-            if (arr[tail] == 2)
-                tail--;
-          
-            if (arr[head] == 1 && !doneFromHead) {
-                int idx = head;
-                while(++idx < tail) {
-                    if (arr[idx] == 0) {
-                        swap(arr, idx, head++);
-                        break;
-                    }
+    public static void sortColors(int[] nums) {
+        if (nums.length < 2)
+            return;
+
+        int left = 0;
+        int middle = left;
+        int right = nums.length-1;
+
+        while (middle <= right) {
+            System.out.println(left + " " + middle + " " + right + " ");
+        for (int num : nums)
+            System.out.print(num);
+        System.out.println("");
+
+            if (middle == left) {
+                if (nums[right] == 0) {
+                    swap(nums, left, right);
+                    left++;
+                    middle++;
+                } else if (nums[right] == 1) {
+                    swap(nums, middle, right);
+                    middle++;
+                    right--;
                 }
-                if (idx >= tail) {
-                    doneFromHead = true;
+                while (right>=0 && nums[right]==2) {
+                        right--;
                 }
-            }
-          
-            if (arr[tail] == 1 && !doneFromTail) {
-                int idx = tail;
-                while(head <= --idx) {
-                    if (arr[idx] == 2) {
-                        swap(arr, idx, tail--);
-                        break;
-                    }
+            } else {
+                if (nums[right] == 0) {
+                    swap(nums, left, right);
+                    left++;
+                } else if (nums[right] == 1) {
+                    swap(nums, middle, right);
+                    middle++;
                 }
-                if (idx <= head) {
-                    doneFromTail = true;
+                while (right>=0 && nums[right]==2) {
+                        right--;
                 }
             }
-          
-            if ((arr[head] == 2 && arr[tail] == 0) ||
-                (arr[head] == 1 && arr[tail] == 0) ||
-                (arr[head] == 2 && arr[tail] == 1))
-                swap(arr, head++, tail--);
         }
-      
+/*            
+        int left = 0; // right of all 0's
+        while (left<nums.length && nums[left] == 0)
+            left++;
+        
+        if (left >= nums.length)
+            return;
+        
+        int middle = left; // right of all 0's followed by 1's
+        while (middle<nums.length && nums[middle] == 1)
+            middle++;
+        
+        int right = nums.length-1; // left of all 2's
+        while (right>=0 && nums[right] == 2)
+            right--;
+       
+        int j = 0;
+ 
+        while(middle < right) {
+            j++;
+            if (j>nums.length) return;
+            System.out.println(left + " " + middle + " " + right + " ");
+        for (int num : nums)
+            System.out.print(num);
+        System.out.println("");
+            if (nums[left] == 1) { // middle is not in the same position as left
+                if (nums[middle] == 0) {
+                    swap(nums, left, middle);
+                    left++;
+                    middle++;
+                } else { // nums[middle] == 2
+                    swap(nums, middle, right);
+                    right--;
+                    if (nums[middle] == 1)
+                        middle++;
+                }
+            } else { // middle is in the same position as left, nums[middle] == 2
+                swap(nums, middle, right);
+                middle++;
+                right--;
+                if (nums[left] == 0) 
+                    left++;
+            }
+            
+        }
+*/
+
     }
-  
-    public static void swap(int[] arr, int idx1, int idx2) {
-        int temp = arr[idx1];  
-        arr[idx1] = arr[idx2];
-        arr[idx2] = temp;
+    
+    public static void swap(int[] nums, int idx1, int idx2) {
+        int temp = nums[idx1];
+        nums[idx1] = nums[idx2];
+        nums[idx2] = temp;
     }
 }
 
