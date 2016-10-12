@@ -4,7 +4,6 @@
 #include<sys/socket.h>    
 #include<sys/types.h>    
 #include<unistd.h>
-#include<signal.h>
 #include<string.h>
 #include<stdbool.h>
 
@@ -81,7 +80,7 @@ int main() {
         // print data received from client,
         // we assume its an http GET request although it needn't be =)
         // we don't have to hard exit() at this point, life goes on
-        if(recv(connsd, buffer, BUFSIZE, 0) < 0)
+        if(recvfrom(connsd, buffer, BUFSIZE, 0, NULL, NULL) < 0)
             perror("recv() system call error.");
         else
             printf("socket %d received:\n%s\n", connsd, buffer);
