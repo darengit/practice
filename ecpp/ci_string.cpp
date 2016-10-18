@@ -29,6 +29,10 @@ namespace ecpp {
 	typedef basic_string<char, ecpp::ci_char_traits> ci_string;
 }
 
+bool operator==(const string &lhs, const ecpp::ci_string &rhs) {
+	return lhs.c_str()==rhs;
+}
+
 int main() {
 	ecpp::ci_string s("AbCdE");
 
@@ -38,6 +42,11 @@ int main() {
 	assert(s<"B");
 	assert(s>"ab");
 	assert(s>"Ab");
+
+	string str("abcde");
+	assert(str==s);
+
+	assert(s==ecpp::ci_string("abcde"));
 
 	assert(strcmp(s.c_str(),"AbCdE") == 0);
 	assert(strcmp(s.c_str(),"abcde") != 0);
