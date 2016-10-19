@@ -6,15 +6,10 @@
 
 #define EXAMPLE_CONST (1<<24)
 
-struct ThreadArgs {
-	void *targv;
-	int targc;
-};
-
 volatile int counter = 0;
 
 void *thread1(void *targ) {
-	sem_t *mp = (sem_t *)((struct ThreadArgs *)targ)->targv;
+	sem_t *mp = (sem_t *)targ;
 
 	for(int i=0; i<EXAMPLE_CONST; ++i) {
 		sem_wait(mp);
@@ -36,10 +31,10 @@ int main(int argc, char *argv[]) {
 	int ret;
 	printf("main:\n");
 	
-	ret = pthread_create(p1, NULL, &thread1, (void *)(struct ThreadArgs[]){(struct ThreadArgs){(void *)&m,1}});
-	printf("p_create %lx ret: %d\n", *p1, ret);
-	ret = pthread_create(p2, NULL, &thread1, (void *)(struct ThreadArgs[]){(struct ThreadArgs){(void *)&m,1}});
-	printf("p_create %lx ret: %d\n", *p2, ret);
+	ret = pthread_create(p1, NULL, &thread1, (void *)&m);
+	printf("p_create 0x%lx ret: %d\n", *p1, ret);
+	ret = pthread_create(p2, NULL, &thread1, (void *)&m);
+	printf("p_create 0x%lx ret: %d\n", *p2, ret);
 
 	for(int i=0; i<EXAMPLE_CONST; ++i) {
 		sem_wait(&m);
@@ -48,9 +43,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	ret = pthread_join(*p1, NULL);
-	printf("join %lx ret: %d\n", *p1, ret);
+	printf("join 0x%lx ret: %d\n", *p1, ret);
 	ret = pthread_join(*p2, NULL);
-	printf("join %lx ret: %d\n", *p2, ret);
+	printf("join 0x%lx ret: %d\n", *p2, ret);
 
 	printf("actual counter %d but should be %d\n", counter, 3*EXAMPLE_CONST);
 
