@@ -24,6 +24,14 @@ namespace ecpp {
 				}
 				return 0;
 			}
+			static const char *find(const char *p, size_t s, const char &c) {
+				size_t i=0;
+				while(i < s) {
+					if(eq(c,p[i++]))
+						return p+i-1;
+				}
+				return NULL;
+			}
 	};
 
 	typedef basic_string<char, ecpp::ci_char_traits> ci_string;
@@ -47,6 +55,9 @@ int main() {
 	assert(str==s);
 
 	assert(s==ecpp::ci_string("abcde"));
+	assert(s.find("abcd") == s.find("AbCd"));
+	assert(s.find("abc") != string::npos);
+	assert(s.find("zht") == string::npos);
 
 	assert(strcmp(s.c_str(),"AbCdE") == 0);
 	assert(strcmp(s.c_str(),"abcde") != 0);

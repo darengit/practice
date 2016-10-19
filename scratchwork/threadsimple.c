@@ -7,14 +7,14 @@
 #define EXAMPLE_CONST (1<<24)
 
 struct ThreadArgs {
-	void **targv;
+	void *targv;
 	int targc;
 };
 
 volatile int counter = 0;
 
 void *thread1(void *targ) {
-	sem_t *mp = (sem_t *)((struct ThreadArgs *)targ)->targv[0];
+	sem_t *mp = (sem_t *)((struct ThreadArgs *)targ)->targv;
 
 	for(int i=0; i<EXAMPLE_CONST; ++i) {
 		sem_wait(mp);
@@ -35,14 +35,10 @@ int main(int argc, char *argv[]) {
 
 	int ret;
 	printf("main:\n");
-
-	void *targv[] = {(void *)&m};
-	struct ThreadArgs targs1 = {targv, 1};
-	struct ThreadArgs targs2 = {targv, 1};
-
-	ret = pthread_create(p1, NULL, &thread1, &targs1);
+	
+	ret = pthread_create(p1, NULL, &thread1, (void *)(struct ThreadArgs[]){(struct ThreadArgs){(void *)&m,1}});
 	printf("p_create %lx ret: %d\n", *p1, ret);
-	ret = pthread_create(p2, NULL, &thread1, &targs2);
+	ret = pthread_create(p2, NULL, &thread1, (void *)(struct ThreadArgs[]){(struct ThreadArgs){(void *)&m,1}});
 	printf("p_create %lx ret: %d\n", *p2, ret);
 
 	for(int i=0; i<EXAMPLE_CONST; ++i) {
