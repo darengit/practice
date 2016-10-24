@@ -42,14 +42,14 @@ namespace solution {
         public:
         Rational x;
         Rational y;
-        Point(Rational x, Rational y):x(x),y(y){}
+        Point(const Rational &x, const Rational &y):x(x),y(y){}
     };
 
-    bool parallel(Line l1, Line l2) {
+    inline bool parallel(const Line &l1, const Line &l2) {
         return l1.slope==l2.slope;
     }
 
-    Point intersection(Line l1, Line l2) {
+    Point intersection(const Line &l1, const Line &l2) {
         return Point(Rational(l2.yinter-l1.yinter,l1.slope-l2.slope),
                      Rational(l1.slope*l2.yinter-l2.slope*l1.yinter,l1.slope-l2.slope));
     }
@@ -102,5 +102,6 @@ int runnersMeetings(std::vector<int> startPosition, std::vector<int> speed) {
 }
 
 int main() {
-    assert(runnersMeetings(std::vector<int> {1,4,2},std::vector<int> {27,18,24}))==3);
+    int m = runnersMeetings(std::vector<int> {1,4,2},std::vector<int> {27,18,24});
+    assert(m==3);
 }
