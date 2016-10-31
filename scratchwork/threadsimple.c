@@ -1,4 +1,4 @@
-# gcc -Wall -std=c11 -DTHREAD_COUNT=<number> <filename.c> -lpthread
+// gcc -Wall -std=c11 -DTHREAD_COUNT=<number> <filename.c> -lpthread
 
 #include <stdlib.h>
 #include <stdio.h>
