@@ -10,22 +10,22 @@
 #include <sys/stat.h>
 
 class WordReader {
-	char *m_wholeFile;
-	char *m_rdPos;
-	char *m_endPos;
+    char *m_wholeFile;
+    char *m_rdPos;
+    char *m_endPos;
 
 public:
-	WordReader(const char *fn);
-	String8 getWord();
+    WordReader(const char *fn);
+    String8 getWord();
 };
 
 #else
 
 class WordReader {
-	std::ifstream m_inFile;
+    std::ifstream m_inFile;
 public:
-	WordReader(const char *filename) : m_inFile(filename) {}
-	String8 getWord();
+    WordReader(const char *filename) : m_inFile(filename) {}
+    String8 getWord();
 };
 
 #endif

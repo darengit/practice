@@ -1,13 +1,12 @@
-#include <vector>
 #include "tester.h"
 
-void testLinearSearch(WordReader &reader) {
+void testLinearSearch(WordReader *reader) {
     std::vector<Item> wordList;
 
-    while(String8 word = reader.getWord()) {
+    while(String8 word = reader->getWord()) {
 	size_t i;
-	for(i=0; i<wordList.size(); ++i) {
-	    if(wordList[i].word == word) {
+        for(i=0; i<wordList.size(); ++i) {
+            if(wordList[i].word == word) {
 		++wordList[i].count;
 		break;
 	    }
@@ -21,12 +20,21 @@ void testLinearSearch(WordReader &reader) {
         printf("%s: %d\n", item.word.toString().c_str(), item.count);
 }
 
-template <typename T>
-void testMap(WordReader &reader) {
-    T wordCount;
+void testMap(WordReader *reader) {
+    std::map<String8, int> wordCount;
 
-    while(String8 word = reader.getWord())
-	wordCount[word] += 1;
+    while(String8 word = reader->getWord())
+	++wordCount[word];
+
+    for(const std::pair<String8, int> &p : wordCount)
+        printf("%s: %d\n", p.first.toString().c_str(), p.second);
+}
+
+void testUnorderedMap(WordReader *reader) {
+    std::unordered_map<String8, int> wordCount;
+
+    while(String8 word = reader->getWord())
+	++wordCount[word];
 
     for(const std::pair<String8, int> &p : wordCount)
         printf("%s: %d\n", p.first.toString().c_str(), p.second);

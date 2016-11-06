@@ -1,5 +1,5 @@
 #if READ_WHOLE_FILE
-	#include "wordreaderfile.cpp"
+    #include "wordreaderfile.cpp"
 #else
-	#include "wordreaderword.cpp"
+    #include "wordreaderword.cpp"
 #endif
