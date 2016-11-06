@@ -13,6 +13,7 @@ struct Item {
 };
 
 void testLinearSearch(WordReader *r);
+template<template<typename...>class M, typename K, typename V> void templatedTestMap(WordReader * r);
 void testMap(WordReader *r);
 void testUnorderedMap(WordReader *r);
 #endif

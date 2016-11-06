@@ -20,6 +20,26 @@ void testLinearSearch(WordReader *reader) {
         printf("%s: %d\n", item.word.toString().c_str(), item.count);
 }
 
+template<template<typename...>class M, typename K, typename V>
+void templatedTestMap(WordReader *reader) {
+    M<K,V> wordCount;
+
+    while(String8 word = reader->getWord())
+	++wordCount[word];
+
+    for(const std::pair<String8, int> &p : wordCount)
+        printf("%s: %d\n", p.first.toString().c_str(), p.second);
+}
+
+void testMap(WordReader *r) {
+	templatedTestMap<std::map,String8,int>(r);
+}
+void testUnorderedMap(WordReader *r) {
+	templatedTestMap<std::unordered_map,String8,int>(r);
+}
+
+
+/*
 void testMap(WordReader *reader) {
     std::map<String8, int> wordCount;
 
@@ -39,3 +59,4 @@ void testUnorderedMap(WordReader *reader) {
     for(const std::pair<String8, int> &p : wordCount)
         printf("%s: %d\n", p.first.toString().c_str(), p.second);
 }
+*/
