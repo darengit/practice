@@ -1,6 +1,6 @@
 #include <stdio.h>
+#include <time.h>
 #include <thread>
-#include <chrono>
 #include "string8.h"
 #include "wordreader.h"
 #include "tester.h"
@@ -10,20 +10,19 @@ struct TestEntry {
     const char *name;
 };
 
-TestEntry TestEntries[] = {
+TestEntry testEntries[] = {
     { testLinearSearch, "linear search" },
     { testMap, "std::map" },
     { testUnorderedMap, "std::unordered_map" },
 };
 
 void tester(TestEntry *entry, char *filename) {
-    std::chrono::time_point<std::chrono::system_clock> start, end;
-    start = std::chrono::high_resolution_clock::now();
+    clock_t start = clock();
     WordReader reader(filename);
     entry->testFunc(&reader);
-    end = std::chrono::high_resolution_clock::now();
-    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
-    printf("%s : %ldms\n", entry->name, millis);
+    clock_t end = clock();
+    double millis = (double)(end-start)/CLOCKS_PER_SEC*1000;
+    printf("%s : %dms\n", entry->name, (int)millis);
 }
 
 int main(int argc, char *argv[]) {
@@ -34,7 +33,7 @@ int main(int argc, char *argv[]) {
 
     std::thread ts[3];
     for(int i=0; i<3; ++i)
-        ts[i] = std::thread(tester, &TestEntries[i], argv[1]);
+        ts[i] = std::thread(tester, testEntries+i, argv[1]);
     for(int i=0; i<3; ++i)
         ts[i].join();
 

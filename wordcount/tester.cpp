@@ -37,26 +37,3 @@ void testMap(WordReader *r) {
 void testUnorderedMap(WordReader *r) {
 	templatedTestMap<std::unordered_map,String8,int>(r);
 }
-
-
-/*
-void testMap(WordReader *reader) {
-    std::map<String8, int> wordCount;
-
-    while(String8 word = reader->getWord())
-	++wordCount[word];
-
-    for(const std::pair<String8, int> &p : wordCount)
-        printf("%s: %d\n", p.first.toString().c_str(), p.second);
-}
-
-void testUnorderedMap(WordReader *reader) {
-    std::unordered_map<String8, int> wordCount;
-
-    while(String8 word = reader->getWord())
-	++wordCount[word];
-
-    for(const std::pair<String8, int> &p : wordCount)
-        printf("%s: %d\n", p.first.toString().c_str(), p.second);
-}
-*/
