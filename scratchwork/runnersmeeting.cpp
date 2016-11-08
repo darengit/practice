@@ -53,43 +53,44 @@ namespace solution {
         return Point(Rational(l2.yinter-l1.yinter,l1.slope-l2.slope),
                      Rational(l1.slope*l2.yinter-l2.slope*l1.yinter,l1.slope-l2.slope));
     }
+}
 
-    bool operator==(const Rational &a, const Rational &b) {
+namespace std {
+    bool operator==(const solution::Rational &a, const solution::Rational &b) {
         return a.sign==b.sign && a.numerator==b.numerator && a.denominator==b.denominator;
     }
 
-    bool operator==(const Point &a, const Point &b) {
+    bool operator==(const solution::Point &a, const solution::Point &b) {
         return a.x==b.x && a.y==b.y;
     }
 
-    class HashRational {
-        public:
-        size_t operator()(const Rational &r) const {
+    template<>
+    struct hash<solution::Rational> {
+        size_t operator()(const solution::Rational &r) const {
             std::hash<int> h;
-            return h(r.sign)^h(r.numerator)^h(r.denominator);
+            return h(r.sign<<1)^h(r.numerator>>1)^h(r.denominator);
         }
     };
 
-    class HashPoint {
-        public:
-        size_t operator()(const Point &p) const {
-            HashRational hr;
-            return hr(p.x)^hr(p.y);
+    template<>
+    struct hash<solution::Point> {
+        size_t operator()(const solution::Point &p) const {
+            std::hash<solution::Rational> h;
+            return h(p.x)^h(p.y);
         }
     };
 }
 
-
 int runnersMeetings(std::vector<int> startPosition, std::vector<int> speed) {
     std::vector<solution::Line> lines;
-    for(int i=0; i<startPosition.size(); ++i) {
-        lines.push_back(solution::Line(startPosition[i], speed[i]));
+    for(size_t i=0; i<startPosition.size(); ++i) {
+        lines.emplace_back(solution::Line(startPosition[i], speed[i]));
     }    
     
     int maxInter = 0;
-    for(int i=0; i<lines.size(); ++i) {
-        std::unordered_map<solution::Point, int, solution::HashPoint> intersections;
-        for(int j=i+1; j<lines.size(); ++j) {
+    for(size_t i=0; i<lines.size(); ++i) {
+        std::unordered_map<solution::Point, int> intersections;
+        for(size_t j=i+1; j<lines.size(); ++j) {
             if(!parallel(lines[i],lines[j])){
                 solution::Point intersect = solution::intersection(lines[i], lines[j]);
                 int n = ++intersections[intersect];
@@ -100,6 +101,10 @@ int runnersMeetings(std::vector<int> startPosition, std::vector<int> speed) {
     }
     return maxInter+1;
 }
+
+struct A{
+int i;
+};
 
 int main() {
     int m = runnersMeetings(std::vector<int> {1,4,2},std::vector<int> {27,18,24});
