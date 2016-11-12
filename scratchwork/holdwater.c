@@ -69,21 +69,30 @@ int main() {
 		for(int i=0; i<l; ++i)
 			heights[i] = rand()%1024;
 
-		clock_t start = clock();
+        clock_t start, end;
+
+#ifdef TWO_PASS
+		start = clock();
 		int twopass = holdwater2pass(heights, l);
-		clock_t end = clock();
+		end = clock();
 
 		double rt2pass = (double)(end-start)/CLOCKS_PER_SEC;
-
+#endif
+#ifdef ONE_PASS
 		start = clock();
 		int onepass = holdwater1pass(heights, l);
 		end = clock();
 
 		double rt1pass = (double)(end-start)/CLOCKS_PER_SEC;
-
+#endif
+#ifdef TWO_PASS
+#ifdef ONE_PASS
 		assert(onepass == twopass);
-
+#ifdef OUTPUT_EXECTIME
 		printf("length %d 1pass %f 2pass %f\n", l, rt1pass, rt2pass);
+#endif
+#endif
+#endif
 
 	} 
 
