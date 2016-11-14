@@ -1,18 +1,7 @@
 #include <stdio.h>
-
 #include <vector>
 #include <algorithm>
 
-
-
-
-/*
-class STLPermutation {
-public:
-    STLPermutation(std::vector<int> &&v) topermute(v)
-
-}
-*/
 
 void recursivepermutate(std::vector<int> &v, int i, int size) {
     if(i+1 == size) {
@@ -36,7 +25,7 @@ bool orderedswap(std::vector<int> &v, std::vector<int> &c) {
         if(c[a]<c[a+1]) break;
     if(a<0) return false;
 
-    for(b=a+1; b<c.size(); ++b)
+    for(b=a+1; b<(int)c.size(); ++b)
         if(c[b]<c[a]) break;
     --b;
 
@@ -52,7 +41,7 @@ bool orderedswap(std::vector<int> &v, std::vector<int> &c) {
 
 void companionpermutate(std::vector<int> &v) {
     std::vector<int> companion(v.size());
-    for(int i=0; i<companion.size(); ++i) companion[i]=i;
+    for(int i=0; i<(int)companion.size(); ++i) companion[i]=i;
     
     do {
         for(int i: v) printf("%d ", i);
@@ -63,7 +52,7 @@ void companionpermutate(std::vector<int> &v) {
 int main() {
     
     std::vector<int> test(TEST_VECTOR_SIZE);
-    for(int i=0; i<test.size(); ++i) test[i]=i;
+    for(int i=0; i<(int)test.size(); ++i) test[i]=i;
     std::sort(test.begin(), test.end());
     do {
         for(int i: test) printf("%d ", i);
