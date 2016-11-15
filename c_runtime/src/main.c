@@ -5,10 +5,10 @@ void println(char *s) {
 
 int main(int argc, char **argv, char **envp) {
     println("*** command line args ***");
-    for(int i=1; i<argc; ++i) println(argv[1]);
+    for(int i=1; i<argc; ++i) println(argv[i]);
 
     println("*** environment ***");
     while(*envp) println(*envp++);
 
-    return 0;
+    return argc;
 }
