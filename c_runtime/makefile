@@ -1,16 +1,12 @@
 all: bin/a.out
 
-bin/a.out: build/main.o build/strlen.o build/write.o build/__boot.o build/__main.o build/__exit.o
+bin/a.out: build/main.o build/write.o build/__boot.o build/__main.o build/__exit.o
 	mkdir -p bin
-	ld build/main.o build/strlen.o build/write.o build/__boot.o build/__main.o build/__exit.o -o bin/a.out
+	ld build/main.o build/write.o build/__boot.o build/__main.o build/__exit.o -o bin/a.out
 
 build/main.o: src/main.c
 	mkdir -p build
 	gcc -Wall -std=c11 -g -c src/main.c -o build/main.o
-
-build/strlen.o: src/strlen.c
-	mkdir -p build
-	gcc -Wall -std=c11 -g -c src/strlen.c -o build/strlen.o
 
 build/write.o: src/write.s
 	mkdir -p build
