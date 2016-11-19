@@ -1,0 +1,1 @@
+*((int *)((unsigned long)&a+3*sizeof(int)))

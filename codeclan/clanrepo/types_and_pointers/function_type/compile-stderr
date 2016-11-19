@@ -1,0 +1,5 @@
+In file included from problem.c:5:0:
+problem.c: In function ‘main’:
+solution.txt:1:6: warning: unused variable ‘f’ [-Wunused-variable]
+ int(*f)(int, char)
+      ^
