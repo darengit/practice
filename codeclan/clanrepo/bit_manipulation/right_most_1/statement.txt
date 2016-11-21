@@ -1,0 +1,2 @@
+You have an integer n (int n) and you want to calculate an integer that is the result of
+changing the right most '1' from n's bit representation to 0.

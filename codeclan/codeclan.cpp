@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/wait.h>
@@ -8,9 +9,6 @@
 #include <fstream>
 #include <iostream>
 
-namespace codeclan {
-    char *const *envp;
-}
 
 class ClanMission {
 public:
@@ -25,15 +23,10 @@ public:
     bool solved;
 
     ClanMission(std::string d, int *g, std::pair<std::string,bool>(*f)(std::string));
-
     std::string nameFromDir(std::string dir);
-
     std::string missionStatementFromDir(std::string dir);
-
     bool parse(std::string in);
-
     bool solve();
-
     void run();
 };
 
@@ -47,11 +40,8 @@ public:
     CodeClan(int *s, std::string missiondir);
 
     void loadmissions(std::string dir);
-
     void run();
-
     void categorymenu(std::vector<std::pair<std::string,std::vector<ClanMission>>> m);
-
     void missionmenu(std::vector<ClanMission> missons);
 };
 
@@ -71,6 +61,9 @@ public:
     }
 
     std::string ClanMission::missionStatementFromDir(std::string dir) {
+
+std::cout << dir << std::endl;
+
         std::ifstream ifs(dir + "/" + "statement.txt");
         std::string content( (std::istreambuf_iterator<char>(ifs) ),
             (std::istreambuf_iterator<char>()    ) );
@@ -89,20 +82,28 @@ public:
     bool ClanMission::solve() {
         pid_t pid = fork();
         if(pid == 0) {
-            const char *const argv[] = {"-Wall", "-std=c11", (dir+"/problem.c").c_str(), "-o", (dir+"/a.out").c_str(), ">", (dir+"/gcc.out").c_str(), "2>&1"};
-            execve("gcc", const_cast<char *const *>(argv), codeclan::envp);
+
+std::cout << dir << std::endl;
+std::cout << get_current_dir_name() << std::endl;
+            const char *const argv[] = {"gcc", "-Wall", "-std=c11", (dir+"/problem.c").c_str(), "-o", (dir+"/a.out").c_str(), NULL};
+            int err = execvp("gcc", const_cast<char *const *>(argv));
+            perror("execve returned with error");
+            exit(err);
 
         } else if (pid > 0) {
             int status;
             if(waitpid(pid, &status, 0)==pid && status) {
-                std::cout << "compilation error occured, example " << dir << "/gcc.out" << std::endl;
+                std::cout << "compilation error occured, examine " << dir << "/gcc.out" << std::endl;
                 return false;
             }
         }
 
         pid = fork();
         if(pid == 0) {
-            execve("bin/a.out", (char *const[]){}, codeclan::envp);
+            const char *const argv[] = {"a.out", NULL};
+            int err = execvp((dir+"/a.out").c_str(), const_cast<char *const *>(argv));
+            perror("execve returned with error");
+            exit(err);
         } else if (pid > 0) {
             int status;
             if(waitpid(pid, &status, 0)==pid && status) {
@@ -120,15 +121,20 @@ public:
         while(!solved) {
             std::cout << solveerror << std::endl;
             std::string input;
-            while(!parse(input)) {
+            do {
                 std::cout << parseerror << std::endl;
-                std::cout << "'b' to go back to categories" << std::endl;
+                std::cout << "'b' to go back to missions" << std::endl;
+                std::cout << "'q' or 'quit' to quit" << std::endl;
                 std::cout << missionstatement << std::endl;
                 std::cout << ":";
                 std::cin >> input;
-                if(input=="b" || input=="B")
+                if(input=="b" || input=="back")
                     goto goback;
-            }
+                else if(input=="q" || input=="quit") {
+                    gamestate[0] = -2;
+                    goto goback;
+                }
+            } while(!parse(input));
 
 
             std::ofstream solutionfile(dir + "/solution.txt", std::ofstream::out|std::ofstream::trunc);
@@ -155,9 +161,9 @@ goback:
         DIR *d;
 struct dirent *drt;
 if ((d=opendir(dir.c_str()))) {
-  /* print all the files and directories within directory */
   while ((drt=readdir(d))) {
-    missionsByCategory.emplace_back(std::pair<std::string,std::vector<ClanMission>> (drt->d_name, std::vector<ClanMission>{}));
+    if(drt->d_type==DT_DIR && strcmp(drt->d_name,".") && strcmp(drt->d_name,".."))
+        missionsByCategory.emplace_back(std::pair<std::string,std::vector<ClanMission>> (drt->d_name, std::vector<ClanMission>{}));
   }
   closedir(d);
 }
@@ -166,11 +172,11 @@ if ((d=opendir(dir.c_str()))) {
          DIR *d;
 struct dirent *drt;
 if ((d=opendir((dir+"/"+p.first).c_str()))) {
-  /* print all the files and directories within directory */
   while ((drt=readdir(d))) {
+    if(drt->d_type==DT_DIR && strcmp(drt->d_name,".") && strcmp(drt->d_name,".."))
     //missionsByCategory.emplace_back(std::pair<std::string,std::vector<ClanMission>> (end->d_name, std::vector<ClanMission>{}));
-    p.second.emplace_back(ClanMission(drt->d_name,gamestate,
-        [](std::string s)->std::pair<std::string,bool> {return std::pair<std::string,bool>{s,true};}));
+        p.second.emplace_back(ClanMission(dir+"/"+p.first+"/"+drt->d_name,gamestate,
+            [](std::string s)->std::pair<std::string,bool> {return std::pair<std::string,bool>{s,true};}));
     // todo : fill in differentparsing func
   }
   closedir(d);
@@ -181,6 +187,7 @@ if ((d=opendir((dir+"/"+p.first).c_str()))) {
 
     void CodeClan::run() {
         while(gamestate[0] != -2) {
+std::cout << std::to_string(gamestate[0]) << " " << std::to_string(gamestate[1]) << std::endl;
             if(gamestate[0] == -1)
                 categorymenu(missionsByCategory);
             else if (gamestate[1] == -1)
@@ -202,16 +209,13 @@ if ((d=opendir((dir+"/"+p.first).c_str()))) {
         std::string input;
         std::cin >> input;
 
-        if(input=="q" || input=="Q") {
+        if(input=="q" || input=="quit") {
             gamestate[0] = -2;
-            return;
+        } else {
+            int chosen = atoi(input.c_str());
+            if(1<=chosen && chosen<=(int)m.size())
+                gamestate[0] = chosen-1;
         }
-
-        int chosen = atoi(input.c_str());
-
-        if(1<=chosen && chosen<=(int)m.size())
-            gamestate[0] = chosen-1;
-
         return;
     }
 
@@ -226,29 +230,22 @@ if ((d=opendir((dir+"/"+p.first).c_str()))) {
         std::string input;
         std::cin >> input;
 
-        if(input=="b" || input=="B") {
-            gamestate[1] = -1;
-            return;
-        }
-
-        if(input=="q" || input=="Q") {
+        if(input=="b" || input=="back") {
+            gamestate[0] = -1;
+        } else if(input=="q" || input=="quit") {
             gamestate[0] = -2;
-            return;
+        } else {
+            int chosen = atoi(input.c_str());
+            if(1<=chosen && chosen<=(int)missions.size())
+                gamestate[1] = chosen-1;
         }
-
-        int chosen = atoi(input.c_str());
-
-        if(1<=chosen && chosen<=(int)missions.size())
-            gamestate[0] = chosen-1;
-
         return;
     }
 
 
 
 
-int main(int argc, char *const *argv, char *const *envp) {
-    codeclan::envp = envp;
+int main(int argc, char *const *argv) {
     int state[2] = {-1, -1};
 
     CodeClan c(state, "clanrepo");
