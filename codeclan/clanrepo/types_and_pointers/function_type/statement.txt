@@ -1,0 +1,2 @@
+write the declaration of a function pointer f which takes an int and a char as its first
+and second arguments respectively and returns an int

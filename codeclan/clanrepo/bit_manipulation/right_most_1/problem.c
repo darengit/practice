@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-int main(int argc, char *argv[]) {
-    int n = atoi(argv[1]);
+int main() {
+    int n = rand();
     if((
     #include "solution.txt"
     ) == (n&(n-1)))

@@ -8,4 +8,4 @@ bin/a.out: codeclan.cpp
 	g++ -Wall -std=c++14 -g codeclan.cpp -o bin/a.out
 
 clean:
-	rm -rd bin
+	rm -rf bin

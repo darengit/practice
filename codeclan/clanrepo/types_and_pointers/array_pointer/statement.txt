@@ -1,0 +1,2 @@
+'a' is a pointer to int. write an expression to retrieve the int with memory address
+bigger than 'a' by 3*sizeof(int)
