@@ -18,4 +18,4 @@ bin/a.out: build/codeclan.o build/clanmission.o main.cpp
 	g++ -Wall -std=c++14 -Iinclude -g main.cpp -o bin/a.out build/codeclan.o build/clanmission.o
 
 clean:
-	rm -rf bin
+	rm -rf bin build

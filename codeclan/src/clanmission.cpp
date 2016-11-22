@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <dirent.h>
 #include <sys/wait.h>
 
 #include <vector>
@@ -70,7 +69,6 @@ bool ClanMission::solve() {
             return false;
         }
     }
-
     return true;
 }
 
@@ -96,14 +94,13 @@ void ClanMission::run() {
 
 
         std::ofstream solutionfile(dir + "/solution.txt", std::ofstream::out|std::ofstream::trunc);
-        // dont concatenate, overwrite
         solutionfile << parsedmessage;
-        // possibly flush
         solutionfile.close();
 
         solved = solve();
     }
 
+    std::cout << name << " solved!" << std::endl;
 goback:
     gamestate[1] = -1;
     return;
