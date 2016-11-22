@@ -9,6 +9,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "clanmission.h"
+
 ClanMission::ClanMission(std::string d, int *g, std::pair<std::string,bool>(*f)(std::string)):
     dir{d}, gamestate{g}, parsefunc{f} {
     name = nameFromDir(d);
