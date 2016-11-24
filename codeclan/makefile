@@ -1,9 +1,9 @@
 
-build/codeclan.o: src/codeclan.cpp
+build/codeclan.o: src/codeclan.cpp include/codeclan.h include/clanmission.h include/clanutils.h
 	mkdir -p build
 	g++ -Wall -std=c++14 -Iinclude -c -g src/codeclan.cpp -o build/codeclan.o
 
-build/clanmission.o: src/clanmission.cpp
+build/clanmission.o: src/clanmission.cpp include/clanmission.h include/clanutils.h
 	mkdir -p build
 	g++ -Wall -std=c++14 -Iinclude -c -g src/clanmission.cpp -o build/clanmission.o
 

@@ -1,15 +1,13 @@
-#include <stdlib.h>
-#include <unistd.h>
 #include <dirent.h>
 #include <string.h>
 
 #include <vector>
 #include <string>
-#include <fstream>
 #include <iostream>
 
 #include "codeclan.h"
 #include "clanmission.h"
+#include "clanutils.h"
 
 CodeClan::CodeClan(int *s, std::string mdir): gamestate{s} {
     loadmissions(mdir);
@@ -38,7 +36,6 @@ void CodeClan::loadmissions(std::string dir) {
             }
             closedir(d);
         }
-   
     }
 }
 
@@ -51,19 +48,19 @@ void CodeClan::run() {
         else
             missionsByCategory[gamestate[0]].second[gamestate[1]].run();
     }
-
     return;
 }
 
 void CodeClan::categorymenu(std::vector<std::pair<std::string,std::vector<ClanMission>>> m) {
     std::cout << "Categories" << std::endl;
     for(int i=0; i<(int)m.size(); ++i)
-        std::cout << std::to_string(i+1) << ". " << m[i].first << std::endl;
+        std::cout << std::to_string(i+1) << ". " << codeclan::nameFromDir(m[i].first) << std::endl;
     std::cout << "q. quit" << std::endl;
     std::cout << prompt;
 
     std::string input;
-    std::cin >> input;
+    std::getline(std::cin, input);
+    std::cout << std::endl;
 
     if(input=="q" || input=="quit") {
         gamestate[0] = -2;
@@ -76,7 +73,7 @@ void CodeClan::categorymenu(std::vector<std::pair<std::string,std::vector<ClanMi
 }
 
 void CodeClan::missionmenu(std::vector<ClanMission> missions) {
-    std::cout << missionsByCategory[gamestate[0]].first << " Missions" << std::endl;
+    std::cout << codeclan::nameFromDir(missionsByCategory[gamestate[0]].first) << " Missions" << std::endl;
     for(int i=0; i<(int)missions.size(); ++i)
         std::cout << std::to_string(i+1) << ", " << missions[i].name << std::endl;
     std::cout << "b. back to categories" << std::endl;
@@ -84,7 +81,8 @@ void CodeClan::missionmenu(std::vector<ClanMission> missions) {
     std::cout << prompt;
 
     std::string input;
-    std::cin >> input;
+    std::getline(std::cin, input);
+    std::cout << std::endl;
 
     if(input=="b" || input=="back") {
         gamestate[0] = -1;
