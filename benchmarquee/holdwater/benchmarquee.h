@@ -11,15 +11,15 @@ FUNC_TYPE holdwater2pass;
 FUNC_TYPE holdwater1pass;
 
 extern int benchmarkLength;
-extern FUNC_TYPE *benchmarqee[2];
+extern FUNC_TYPE *benchmarquee[];
 
 extern int inputSize;
 extern INPUT_TYPE *benchmarkInputs;
 
-extern void initInputs();
-extern void freeInputs();
+void initInputs();
+void freeInputs();
 
-extern void freeOutput(RETURN_TYPE);
+inline void freeOutput(RETURN_TYPE) { return; }
 
 inline bool checkOutput(RETURN_TYPE correct, RETURN_TYPE output) {
     return correct == output;
