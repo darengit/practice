@@ -13,16 +13,17 @@ benchmarquee.c(pp)
 To compile and run
 compile:
 ```
-g++ -Wall -std=c++14 -I<your dir> benchmarker.cpp <your dir>/benchmarquee.c(pp) <your dir>/<functions>.c(pp) <add optional args like -O0,1,2>
+g++ -Wall -std=c++14 -I<dir> benchmarker.cpp <dir>/benchmarquee.c(pp) <dir>/<functions>.c(pp)
+<add optional args like -O0,1,2>
 ```
 run:
 ```
 ./a.out
 ```
 
-benchmarker.cpp is a cpp file to allow us to conveniently benchmark both c and cpp.
+`benchmarker.cpp` is a cpp file to allow us to conveniently benchmark both c and cpp.
 
-declarations and definitions can get tricky. Any global variable in benchmarquee.h should be
-declared with 'extern'. And they should be defined in benchmarquee.c(pp). Functions in benchmarquee.h
-are defined in benchmarquee.c(pp) and <functions>.c(pp).
+declarations and definitions can get tricky. Any global variable in `benchmarquee.h` should be
+declared with `extern`. And they should be defined in `benchmarquee.c(pp)`. Functions in
+`benchmarquee.h` are defined in `benchmarquee.c(pp)` and `<functions>.c(pp)`.
 
