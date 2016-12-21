@@ -23,6 +23,8 @@ struct Connection {
 	struct Database *db;
 };
 
+
+// make die take args similar to printf
 void die(const char *message) {
 	if(errno) {
 		perror(message);
@@ -82,5 +84,44 @@ void database_create(struct Connection *conn) {
 }
 
 void database_set(struct Connection *conn, int id, const char *name, const char *email) {
+	struct Address *addr = &conn->db->rows[id];
+	if(addr->set) die("already set, delete it first");
+
+	char *res = strncpy(addr->name, name, MAX_DATA-1);
+	if(!res) die("name copy failed");
+	addr->name[MAX_DATA-1] = '\0';
+
+	res = strncpy(addr->email, email, MAX_DATA-1);
+	if(!res) die("email copy failed");
+	addr->email[MAX_DATA-1] = '\0';
+
+	addr->set = 1;
+}
+
+void database_get(struct Connection *conn, int id) {
+	struct Address *addr = &conn->db->rows[id];
+	if(addr->set)
+		address_print(addr);
+	else
+		die("id is not set");
+}
+
+void database_delete(struct Connection *conn, int id) {
+	struct Address addr = {.id=id, .set=0};
+	conn->db->rows[id] = addr;
+}
+
+void database_list(struct Connection *conn) {
+	for(int i=0; i<MAX_ROWS; ++i) {
+		struct Address *addr = &conn->db->rows[i];
+		if(addr->set)
+			address_print(addr);
+	}
+}
+
+int main(int argc, char *argv[]) {
+	if(argc < 3)
+		die("usage: a.out file action additional_params");
+
 
 }
