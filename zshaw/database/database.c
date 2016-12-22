@@ -16,7 +16,7 @@ struct Address {
 
 struct Database {
 	struct Address rows[MAX_ROWS];
-}
+};
 
 struct Connection {
 	FILE *file;
@@ -77,9 +77,11 @@ void database_write(struct Connection *conn) {
 }
 
 void database_create(struct Connection *conn) {
-	conn->db = {0};
 	for(int i=0; i<MAX_ROWS; ++i) {
-		conn->db->rows[i]->id = i;
+		struct Address addr = {0};
+		addr.id=i;
+		conn->db->rows[i]=addr;
+		//conn->db->rows[i]->id = i;
 	}
 }
 
@@ -123,5 +125,41 @@ int main(int argc, char *argv[]) {
 	if(argc < 3)
 		die("usage: a.out file action additional_params");
 
+	char *filename = argv[1];
 
+	char action = argv[2][0];
+	struct Connection *conn = database_open(filename, action);
+	int id=0;
+
+	if(argc > 3) id = atoi(argv[3]);
+	if(id >= MAX_ROWS) die("record id too high");
+
+	switch (action) {
+		case 'c':
+			database_create(conn);
+			database_write(conn);
+			break;
+		case 'g':
+			if(argc!=4) die("need an id for database_get()");
+			database_get(conn,id);
+			break;
+		case 's':
+			if(argc!=6) die("need id, name, email for database_set()");
+			database_set(conn,id,argv[4],argv[5]);
+			database_write(conn);
+			break;
+		case 'd':
+			if(argc!=4) die("need id to delete");
+			database_delete(conn,id);
+			database_write(conn);
+			break;
+		case 'l':
+			database_list(conn);
+			break;
+		default:
+			die("invalid action: c=create, g=get, s=set, d=delete, l=list");
+	}
+
+	database_close(conn);
+	return 0;
 }
