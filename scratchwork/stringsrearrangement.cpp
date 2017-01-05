@@ -17,7 +17,7 @@ bool travelingsalesman(vector<unordered_set<int>> &g, unordered_set<int> &v, int
     v.insert(i);
     if(v.size() == g.size()) return true;
     
-    for(int j: g[i])
+    for(j: g[i])
         if(v.find(j)==v.end() && travelingsalesman(g,v,j))
             return true;
     
@@ -28,7 +28,7 @@ bool travelingsalesman(vector<unordered_set<int>> &g, unordered_set<int> &v, int
 bool stringsRearrangement(std::vector<std::string> inputArray) {
     vector<unordered_set<int>> graph(inputArray.size());
     for(int i=0; i<inputArray.size(); ++i) {
-        for(int j=0; j<inputArray.size(); ++i) {
+        for(int j=0; j<inputArray.size(); ++j) {
             if(diffone(inputArray[i],inputArray[j]))
                 graph[i].insert(j);
         }
