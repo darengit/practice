@@ -12,15 +12,15 @@
     __FILE__, __LINE__, ##__VA_ARGS__)
 #endif
 
-#define clean_errno() (errno==0?"None":strerror(errno))
+#define errno_to_string() (errno==0?"None":strerror(errno))
 
 #define log_err(M, ...) fprintf(stderr,\
-    "[ERROR] (%s:%d: errno: %s) " M "\n", __FILE__, __LINE__,\
-    clean_errno(), ##__VA_ARGS__)
+    "[ERROR] (%s:%d: errno_to_string: %s) " M "\n", __FILE__, __LINE__,\
+    errno_to_string(), ##__VA_ARGS__)
 
 #define log_warn(M, ...) fprintf(stderr,\
-    "[WARN] (%s:%d: errno: %s) " M "\n",\
-    __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__)
+    "[WARN] (%s:%d: errno_to_string: %s) " M "\n",\
+    __FILE__, __LINE__, errno_to_string(), ##__VA_ARGS__)
 
 #define log_info(M, ...) fprintf(stderr, "[INFO] (%s:%d) " M "\n",\
     __FILE__, __LINE__, ##__VA_ARGS__)
@@ -28,7 +28,7 @@
 #define check(A, M, ...) if(!(A)) {\
     log_err(M, ##__VA_ARGS__); errno=0; goto error; }
 
-#define sentinel(M, ...) {log_err(M, ##__VA_ARGS__);\
+#define goto_error(M, ...) {log_err(M, ##__VA_ARGS__);\
     errno=0; goto error; }
 
 #define check_mem(A) check((A), "Out of memory.")

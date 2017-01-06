@@ -42,7 +42,7 @@ error:
     return -1;
 }
 
-int test_sentinel(int code) {
+int test_goto_error(int code) {
     char *temp = (char *)malloc(100);
     check_mem(temp);
 
@@ -51,7 +51,7 @@ int test_sentinel(int code) {
             log_info("works");
             break;
         default:
-            sentinel("shouldn't get here");
+            goto_error("shouldn't get here");
     }
 
     free(temp);
@@ -70,12 +70,12 @@ int test_check_mem() {
     return 1;
 
 error:
-    return 1;
+    return -1;
 }
 
 int test_check_debug() {
     int i=0;
-    check_debug(i!=0, "oopen i=0");
+    check_debug(i!=0, "oops i=0");
 
     return 0;
 
@@ -84,19 +84,19 @@ error:
 }
 
 int main(int argc, char *argv[]) {
-    check(argc==2, "need an argument");
+    check(argc==2, "need a non-existent file as argument");
 
     test_debug();
     test_log_err();
     test_log_warn();
     test_log_info();
 
-    check(test_check("ex20.c")==0, "failed with ex20.c");
-    check(test_check(argv[1])==-1, "failed with argv");
-    check(test_sentinel(1)==0, "test_sentinel failed");
-    check(test_sentinel(100)==-1, "test_sentinel failed");
-    check(test_check_mem()==-1, "test_check_mem failed");
-    check(test_check_debug()==-1, "test_check_debug failed");
+    check(test_check("ex19.c")==0, "*****test failed******** failed with ex19.c");
+    check(test_check(argv[1])==-1, "*****test failed******** failed with argv");
+    check(test_goto_error(1)==0, "*****test failed******** test_goto_error failed");
+    check(test_goto_error(100)==-1, "*****test failed******** test_goto_error failed");
+    check(test_check_mem()==-1, "*****test failed******** test_check_mem failed");
+    check(test_check_debug()==-1, "*****test failed******** test_check_debug failed");
 
     return 0;
 
