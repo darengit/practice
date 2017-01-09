@@ -25,13 +25,9 @@ int main() {
             RETURN_TYPE output = benchmarquee[i](benchmarkInputs[j]);
             end = clock();
             printf("benchmark %d input %d took %fms\n", i, j, (double)(end-start)/CLOCKS_PER_SEC*MILLIS_PER_SEC);
-
             assert(checkOutput(correct, output));
 
             freeOutput(output);
-
-
-
         }
 
         printf("\n");
