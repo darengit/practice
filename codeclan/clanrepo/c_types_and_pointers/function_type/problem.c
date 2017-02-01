@@ -6,5 +6,5 @@ int func(int a, char s) {
 int main() {
     #include "solution.txt"
     = func;
-    return 0;
+    return (*f)(0,'\0');
 }
