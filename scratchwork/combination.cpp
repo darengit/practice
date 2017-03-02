@@ -29,12 +29,12 @@ int main() {
    int n = 7;
    int m = 3;
 
-   std::vector<std::vector<int>> combinatrix(n+1, std::vector<int>(m));
+   std::vector<std::vector<int>> combinatrix(n+1, std::vector<int>(m+1));
    for(auto &v: combinatrix)
        v[0] = 1;
 
-   for(int from=1; from<combinatrix.size(); ++from)
-       for(int choose=1; choose<=from; ++choose)
+   for(int from=1; from<=n; ++from)
+       for(int choose=1; choose<=m; ++choose)
            combinatrix[from][choose] = combinatrix[from-1][choose]+combinatrix[from-1][choose-1];
 
    for(int k=0; k<combinatrix[n][m]; ++k) {
