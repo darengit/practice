@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-#define EXAMPLE_CONST (1<<24)
+#define EXAMPLE_CONST (1<<10)
 
 volatile int counter = 0;
 
