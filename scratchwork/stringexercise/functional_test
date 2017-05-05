@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "result should be 0.6"
+echo "every cloud has silver lining" > test1.txt
+./a.out abcdefghijklmnopqrstuvwxyz test1.txt
+echo ""
+
+for i in {1..20};
+do
+    cat test1.txt test1.txt > test2.txt && mv test2.txt test1.txt;
+done
+
+echo "result should be 0.6"
+time ./a.out abcdefghijklmnopqrstuvwxyz test1.txt
+
+echo ""
+echo "result should be 0.2"
+time ./a.out ash test1.txt
