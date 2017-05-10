@@ -12,7 +12,7 @@ int main() {
     chrono::time_point<chrono::high_resolution_clock> n = chrono::high_resolution_clock::now();
     cout << (unsigned long long)n.time_since_epoch().count() << endl;
 
-    cout << sizeof(OrderTS) << endl;
+    cout << sizeof(OrderTSGateway) << endl;
 
     Order buf;
 
