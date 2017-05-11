@@ -1,2 +1,2 @@
 clean:
-	rm -f *.stream a.out
+	rm -f *.bin a.out

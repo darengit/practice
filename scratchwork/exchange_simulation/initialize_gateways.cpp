@@ -6,7 +6,7 @@
 
 
 #define FILE_NAME_PREFIX "orders.gateway"
-#define FILE_NAME_SUFFIX ".stream"
+#define FILE_NAME_SUFFIX ".bin"
 #define MAX_ORDER_PRICE 1024*16
 #define ENTITY_COUNT 128
 

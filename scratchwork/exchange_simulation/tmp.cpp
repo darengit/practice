@@ -16,7 +16,7 @@ int main() {
 
     Order buf;
 
-    FILE *f = fopen("orders.gateway0.stream", "r");
+    FILE *f = fopen("orders.gateway0.bin", "r");
     size_t rd;
     while((rd=fread(&buf, sizeof(Order), 1, f)))
         cout << rd << " " << buf.px << " " << buf.entity_id << endl;

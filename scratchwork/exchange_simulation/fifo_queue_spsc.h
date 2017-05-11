@@ -15,6 +15,10 @@ public:
     FIFOQueueSPSC()=default;
     FIFOQueueSPSC(size_t cap):capacity(cap), store(new T[cap]), sz(0), head(0), tail(1) {}
 
+    ~FIFOQueueSPSC() {
+        delete store;
+    }
+
     bool empty() {
         return sz;
     }
