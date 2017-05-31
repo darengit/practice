@@ -8,7 +8,7 @@ struct Order {
     unsigned int entity_id;
 
     Order() = default;
-    Order(Order &other) = default;
+    Order(const Order &other) = default;
     Order(int p, unsigned int id):px(p), entity_id(id){}
 };
 
