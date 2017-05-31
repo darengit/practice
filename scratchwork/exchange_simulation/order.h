@@ -4,12 +4,13 @@
 using namespace std;
 
 struct Order {
-    int px;
+    unsigned int px;
     unsigned int entity_id;
+    bool buysell; // true for buy orders
 
     Order() = default;
     Order(const Order &other) = default;
-    Order(int p, unsigned int id):px(p), entity_id(id){}
+    Order(unsigned int p, unsigned int id, bool buy):px(p), entity_id(id), buysell(buy){}
 };
 
 struct OrderTSGateway {
