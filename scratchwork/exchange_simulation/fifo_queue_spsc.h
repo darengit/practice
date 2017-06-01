@@ -19,12 +19,16 @@ public:
         delete store;
     }
 
+    size_t size() {
+        return sz;
+    }
+
     bool empty() {
         return !sz;
     }
 
-    bool push(T &elt) {
-        if (sz>capacity-2) return false;
+    bool push(const T &elt) {
+        if (sz+2>capacity) return false;
 
         new (store+tail) T(elt);
         tail = (tail+1)%capacity;

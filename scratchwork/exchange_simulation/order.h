@@ -17,10 +17,11 @@ struct OrderTS {
     Order o;
     unsigned long long ts;
 
-    OrderTSGateway(char *buf) {
-        new ((void *)&o) Order(*((int *)buf), *((unsigned int *)(buf+sizeof(int))));
+    OrderTS() = default;
+    OrderTS(const OrderTS &other) = default;
+
+    OrderTS(const Order &order):o(order) {
         ts = (unsigned long long)chrono::high_resolution_clock::now().time_since_epoch().count();
     }
 
-    OrderTSGateway(OrderTSGateway &other) = default;
 };
