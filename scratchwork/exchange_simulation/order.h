@@ -4,12 +4,13 @@
 using namespace std;
 
 struct Order {
-    int px; // negative px signifies a sell order
+    unsigned int px;
+    int qty; // negative qty signifies a sell order
     unsigned int entity_id;
 
     Order() = default;
     Order(const Order &other) = default;
-    Order(int p, unsigned int id):px(p), entity_id(id){}
+    Order(unsigned int p, int q, unsigned int id):px(p), qty(q), entity_id(id){}
 };
 
 // an order with a timestamp in nanoseconds tacked on
