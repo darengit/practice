@@ -1,4 +1,6 @@
 //#include "exchange_simulator.h"
+#include <unistd.h>
+
 #include <cstdlib>
 #include <cassert>
 
@@ -23,9 +25,13 @@ void dispatch_orders(Order *orders, FIFOQueueSPSC<OrderTS> *gateways[], State *s
     for(int i=0; i<TOTAL_ORDERS; ++i) {
         while(!gateways[rand()%GATEWAY_COUNT]->push(orders[i]));
 
-        int cycles = rand()%10000;
+        int delay = rand()%1024;
 
-        for(int j=0; j<cycles; ++j);
+// two different ways to submit orders
+// a constant stream of orders
+// and bursts of orders
+//        for(int j=0; j<delay; ++j);
+        if(!delay) usleep(5000);
     }
 
     state->dispatch_complete = true;
@@ -47,31 +53,32 @@ void sequencer(FIFOQueueSPSC<OrderTS> *gateways[], FIFOQueueSPSC<OrderTS> *seque
     bool sequencing_gateways[GATEWAY_COUNT] = {false};
 
     while(true) {
-        if(!sequencing_queue.empty()) {
-            while(!sequenced->push(sequencing_queue.top().first));
-            sequencing_gateways[sequencing_queue.top().second] = false;
-            sequencing_queue.pop();
-        }
-
+        bool init_empty = sequencing_queue.empty();
+        bool pushed_elt = false;
         for(int i=0; i<GATEWAY_COUNT; ++i) {
-
-            bool pushed_elt = false;
             if(!sequencing_gateways[i] && !gateways[i]->empty()) {
                 sequencing_queue.push(make_pair(gateways[i]->pop(),i));
                 sequencing_gateways[i] = true;
                 pushed_elt = true;
             }
-
-            // if an element was pushed, then there might've been an element with a smaller timestamp
-            // which was already pushed into a gateway but was missed by the previous scan
-            if(pushed_elt) {
-                for(int j=0; j<GATEWAY_COUNT; ++j) {
-                    if(!sequencing_gateways[j] && !gateways[j]->empty()) {
-                        sequencing_queue.push(make_pair(gateways[j]->pop(),j));
-                        sequencing_gateways[j] = true;
-                    }
+        }
+        
+        // this is a really tricky synchronization issue
+        // if the sequencing priority queue was initially empty
+        // we can't guarantee we grabbed the most recent order with a single pass
+        if(init_empty && pushed_elt) {
+            for(int j=0; j<GATEWAY_COUNT; ++j) {
+                if(!sequencing_gateways[j] && !gateways[j]->empty()) {
+                    sequencing_queue.push(make_pair(gateways[j]->pop(),j));
+                    sequencing_gateways[j] = true;
                 }
             }
+        }
+
+        if(!sequencing_queue.empty()) {
+            while(!sequenced->push(sequencing_queue.top().first));
+            sequencing_gateways[sequencing_queue.top().second] = false;
+            sequencing_queue.pop();
         }
 
         if(state->dispatch_complete) {
