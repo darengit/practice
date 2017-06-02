@@ -1,5 +1,6 @@
 //#include "exchange_simulator.h"
 #include <cstdlib>
+#include <cassert>
 
 #include <queue>
 #include <iostream>
@@ -14,6 +15,7 @@ using namespace std;
 struct State {
     bool dispatch_complete;
     bool sequencing_complete;
+    bool match_complete;
 };
 
 
@@ -28,7 +30,7 @@ void dispatch_orders(Order *orders, FIFOQueueSPSC<OrderTS> *gateways[], State *s
 
 struct OrderComp{
     bool operator()(const pair<OrderTS,int> &p1, const pair<OrderTS,int> &p2) {
-        if(p1.first.ts<p2.first.ts || p1.first.ts==p2.first.ts && p1.second<p2.second)
+        if(p1.first.ts>p2.first.ts || p1.first.ts==p2.first.ts && p1.second>p2.second)
             return true;
         return false;
     }
@@ -39,21 +41,57 @@ void sequencer(FIFOQueueSPSC<OrderTS> *gateways[], FIFOQueueSPSC<OrderTS> *seque
     priority_queue<pair<OrderTS,int>, vector<pair<OrderTS,int>>, OrderComp> sequencing_queue;
     bool sequencing_gateways[GATEWAY_COUNT] = {false};
 
-/*
-    bool sequenced_elt = true;
+    while(true) {
+        if(!sequencing_queue.empty()) {
+            while(!sequenced->push(sequencing_queue.top().first));
+            sequencing_gateways[sequencing_queue.top().second] = false;
+            sequencing_queue.pop();
+        }
 
-    while(!state->dispatch_complete || sequenced_elt) {
-        sequenced_elt = false;
+        for(int i=0; i<GATEWAY_COUNT; ++i) {
+            if(!sequencing_gateways[i] && !gateways[i]->empty()) {
+                sequencing_queue.push(make_pair(gateways[i]->pop(),i));
+                sequencing_gateways[i] = true;
+            }
+        }
 
-
+        if(state->dispatch_complete) {
+            bool breakout = true;
+            if(!sequencing_queue.empty())
+                breakout = false;
+            for(int i=0; i<GATEWAY_COUNT; ++i)
+                if(!gateways[i]->empty())
+                    breakout = false;
+            if(breakout)
+                break;
+        }
     }
-*/
-
 
     state->sequencing_complete = true;
     return;
 }
 
+
+void matcher(FIFOQueueSPSC<OrderTS> *sequenced, State *state, Order *orders) {
+    int i=0;
+    while(true) {
+        if(!sequenced->empty()) {
+            OrderTS elt = sequenced->pop();
+            //assert(elt.o == orders[i]);
+            if(!(elt.o == orders[i]))
+                cout << i << " " << elt.ts <<  endl;
+
+
+            ++i;
+        }
+
+        if(state->sequencing_complete && sequenced->empty())
+            break;
+    }
+
+    state->match_complete = true;
+    return;
+}
 
 int main() {
     State *state = new State();
@@ -69,6 +107,7 @@ int main() {
         new (orders+i) Order(rand()%MAX_ORDER_PRICE, rand()%(MAX_ORDER_QUANTITY*2)-MAX_ORDER_QUANTITY, rand()%ENTITY_COUNT);
 
 
+    thread match(matcher, sequenced, state, orders);
 
     thread sequence(sequencer, gateways, sequenced, state);
 
@@ -76,11 +115,12 @@ int main() {
 
     dispatch.join();
     sequence.join();
-
+    match.join();
 
     for(int i=0; i<GATEWAY_COUNT; ++i)
         cout << gateways[i]->size() << endl;
 
+    cout << sequenced->size() << endl;
 
     return 0;
 

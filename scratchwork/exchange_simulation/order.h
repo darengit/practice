@@ -13,6 +13,16 @@ struct Order {
     Order(unsigned int p, int q, unsigned int id):px(p), qty(q), entity_id(id){}
 };
 
+namespace std {
+    bool operator==(const Order &o1, const Order &o2) {
+        if(o1.px != o2.px) return false;
+        if(o1.qty != o2.qty) return false;
+        if(o1.entity_id != o2.entity_id) return false;
+
+        return true;
+    }
+}
+
 // an order with a timestamp in nanoseconds tacked on
 struct OrderTS {
     Order o;
