@@ -1,5 +1,6 @@
 #include <atomic>
 #include <new>
+#include <algorithm>
 
 using namespace std;
 
@@ -12,8 +13,11 @@ class FIFOQueueSPSC {
     size_t tail;
 
 public:
+
+    int mxsz;
+
     FIFOQueueSPSC()=default;
-    FIFOQueueSPSC(size_t cap):capacity(cap), store(new T[cap]), sz(0), head(0), tail(0) {}
+    FIFOQueueSPSC(size_t cap):capacity(cap), store(new T[cap]), sz(0), head(0), tail(0), mxsz(0) {}
 
     ~FIFOQueueSPSC() {
         delete store;
@@ -33,6 +37,9 @@ public:
         new (store+tail) T(elt);
         tail = (tail+1)%capacity;
         sz.fetch_add(1, memory_order_relaxed);
+
+        int intsz = sz;
+        mxsz = max(mxsz,intsz);
 
         return true;
     }

@@ -20,8 +20,13 @@ struct State {
 
 
 void dispatch_orders(Order *orders, FIFOQueueSPSC<OrderTS> *gateways[], State *state) {
-    for(int i=0; i<TOTAL_ORDERS; ++i)
+    for(int i=0; i<TOTAL_ORDERS; ++i) {
         while(!gateways[rand()%GATEWAY_COUNT]->push(orders[i]));
+
+        int cycles = rand()%10000;
+
+        for(int j=0; j<cycles; ++j);
+    }
 
     state->dispatch_complete = true;
 
@@ -49,9 +54,23 @@ void sequencer(FIFOQueueSPSC<OrderTS> *gateways[], FIFOQueueSPSC<OrderTS> *seque
         }
 
         for(int i=0; i<GATEWAY_COUNT; ++i) {
+
+            bool pushed_elt = false;
             if(!sequencing_gateways[i] && !gateways[i]->empty()) {
                 sequencing_queue.push(make_pair(gateways[i]->pop(),i));
                 sequencing_gateways[i] = true;
+                pushed_elt = true;
+            }
+
+            // if an element was pushed, then there might've been an element with a smaller timestamp
+            // which was already pushed into a gateway but was missed by the previous scan
+            if(pushed_elt) {
+                for(int j=0; j<GATEWAY_COUNT; ++j) {
+                    if(!sequencing_gateways[j] && !gateways[j]->empty()) {
+                        sequencing_queue.push(make_pair(gateways[j]->pop(),j));
+                        sequencing_gateways[j] = true;
+                    }
+                }
             }
         }
 
@@ -79,7 +98,7 @@ void matcher(FIFOQueueSPSC<OrderTS> *sequenced, State *state, Order *orders) {
             OrderTS elt = sequenced->pop();
             //assert(elt.o == orders[i]);
             if(!(elt.o == orders[i]))
-                cout << i << " " << elt.ts <<  endl;
+                cout << i << " " << elt.o.id << " " << orders[i].id << " " <<  elt.ts <<  endl;
 
 
             ++i;
@@ -103,8 +122,10 @@ int main() {
     FIFOQueueSPSC<OrderTS> *sequenced = new FIFOQueueSPSC<OrderTS>(SEQUENCED_CAPACITY);
     
     Order *orders = new Order[TOTAL_ORDERS];
-    for(int i=0; i<TOTAL_ORDERS; ++i)
+    for(int i=0; i<TOTAL_ORDERS; ++i) {
         new (orders+i) Order(rand()%MAX_ORDER_PRICE, rand()%(MAX_ORDER_QUANTITY*2)-MAX_ORDER_QUANTITY, rand()%ENTITY_COUNT);
+        orders[i].id=i;
+    }
 
 
     thread match(matcher, sequenced, state, orders);
@@ -118,9 +139,9 @@ int main() {
     match.join();
 
     for(int i=0; i<GATEWAY_COUNT; ++i)
-        cout << gateways[i]->size() << endl;
+        cout << gateways[i]->mxsz << endl;
 
-    cout << sequenced->size() << endl;
+    cout << sequenced->mxsz << endl;
 
     return 0;
 

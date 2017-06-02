@@ -7,6 +7,7 @@ struct Order {
     unsigned int px;
     int qty; // negative qty signifies a sell order
     unsigned int entity_id;
+    int id;
 
     Order() = default;
     Order(const Order &other) = default;
