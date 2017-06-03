@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cassert>
 
+#include <set>
 #include <queue>
 #include <iostream>
 #include <thread>
@@ -39,7 +40,7 @@ void dispatch_orders(Order *orders, FIFOQueueSPSC<OrderTS> *gateways[], State *s
     return;
 }
 
-struct OrderComp{
+struct SequencingOrderComp{
     bool operator()(const pair<OrderTS,int> &p1, const pair<OrderTS,int> &p2) {
         if(p1.first.ts>p2.first.ts || p1.first.ts==p2.first.ts && p1.second>p2.second)
             return true;
@@ -49,7 +50,7 @@ struct OrderComp{
 
 
 void sequencer(FIFOQueueSPSC<OrderTS> *gateways[], FIFOQueueSPSC<OrderTS> *sequenced, State *state) {
-    priority_queue<pair<OrderTS,int>, vector<pair<OrderTS,int>>, OrderComp> sequencing_queue;
+    priority_queue<pair<OrderTS,int>, vector<pair<OrderTS,int>>, SequencingOrderComp> sequencing_queue;
     bool sequencing_gateways[GATEWAY_COUNT] = {false};
 
     while(true) {
@@ -97,11 +98,23 @@ void sequencer(FIFOQueueSPSC<OrderTS> *gateways[], FIFOQueueSPSC<OrderTS> *seque
     return;
 }
 
+struct MatchOrderComp{
+    bool operator()(const OrderTS &o1, const OrderTS &o2) {
+        if(o1.o.px<o2.o.px || o1.o.px==o2.o.px && o1.ts<o2.ts)
+            return true;
+        return false;
+    }
+};
 
-void matcher(FIFOQueueSPSC<OrderTS> *sequenced, State *state, Order *orders) {
+void matcher(FIFOQueueSPSC<OrderTS> *sequenced, Trade *trades, State *state, Order *orders) {
     int i=0;
+
+    set<OrderTS, MatchOrderComp> sellOrders;
+    set<OrderTS, MatchOrderComp> buyOrders;
+
+
     while(true) {
-        if(!sequenced->empty()) {
+        if(!sequenced->empty()) { 
             OrderTS elt = sequenced->pop();
             //assert(elt.o == orders[i]);
             if(!(elt.o == orders[i]))
@@ -127,6 +140,7 @@ int main() {
         gateways[i] = new FIFOQueueSPSC<OrderTS>(GATEWAY_CAPACITY);
 
     FIFOQueueSPSC<OrderTS> *sequenced = new FIFOQueueSPSC<OrderTS>(SEQUENCED_CAPACITY);
+    Trade *trades = new Trade[TRADE_BUFSZ];
     
     Order *orders = new Order[TOTAL_ORDERS];
     for(int i=0; i<TOTAL_ORDERS; ++i) {
@@ -135,7 +149,7 @@ int main() {
     }
 
 
-    thread match(matcher, sequenced, state, orders);
+    thread match(matcher, sequenced, trades, state, orders);
 
     thread sequence(sequencer, gateways, sequenced, state);
 

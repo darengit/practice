@@ -37,3 +37,24 @@ struct OrderTS {
     }
 
 };
+
+struct Trade {
+    unsigned long long buyer_order_ts;
+    unsigned long long seller_order_ts;
+
+    unsigned int buyer_entity_id;
+    unsigned int seller_entity_id;
+
+    unsigned int qty;
+    unsigned int px;
+
+
+    Trade() = default;
+    Trade(const OrderTS &buy, const OrderTS &sell, unsigned int quantity, unsigned int price):
+        buyer_order_ts(buy.ts),
+        seller_order_ts(sell.ts),
+        buyer_entity_id(buy.o.entity_id),
+        seller_entity_id(sell.o.entity_id),
+        qty(quantity),
+        px(price) {}
+};
