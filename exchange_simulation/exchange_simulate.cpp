@@ -4,8 +4,11 @@
 #include <cstdlib>
 #include <cassert>
 
+#include <vector>
 #include <set>
 #include <queue>
+#include <algorithm>
+#include <functional>
 #include <iostream>
 #include <thread>
 
@@ -42,7 +45,7 @@ void dispatch_orders(Order *orders, FIFOQueueSPSC<OrderTS> *gateways[], State *s
 
 struct SequencingOrderComp{
     bool operator()(const pair<OrderTS,int> &p1, const pair<OrderTS,int> &p2) {
-        if(p1.first.ts>p2.first.ts || p1.first.ts==p2.first.ts && p1.second>p2.second)
+        if(p1.first.ts>p2.first.ts || (p1.first.ts==p2.first.ts && p1.second>p2.second))
             return true;
         return false;
     }
@@ -98,20 +101,43 @@ void sequencer(FIFOQueueSPSC<OrderTS> *gateways[], FIFOQueueSPSC<OrderTS> *seque
     return;
 }
 
-struct MatchOrderComp{
+template<template<typename> typename Comp>  
+struct OrderComp{
     bool operator()(const OrderTS &o1, const OrderTS &o2) {
-        if(o1.o.px<o2.o.px || o1.o.px==o2.o.px && o1.ts<o2.ts)
+        Comp<unsigned int> comp;
+        if(comp(o1.o.px, o2.o.px) || (o1.o.px==o2.o.px && o1.ts<o2.ts))
             return true;
         return false;
     }
 };
 
-void matcher(FIFOQueueSPSC<OrderTS> *sequenced, Trade *trades, State *state, Order *orders) {
+void match_order(OrderTS &elt, auto &oppositeSideOrders, auto &sameSideOrders, auto &trades) {
+    auto itr = oppositeSideOrders.begin();
+    while(itr != oppositeSideOrders.end()) {
+        if(elt.o.px <= itr->o.px) {
+            int trade_px = itr->o.px;
+            int trade_qty = min(elt.o.qty, itr->o.qty);
+            trades.emplace_back(elt, *itr, trade_px, trade_qty);
+            elt.o.qty -= trade_qty;
+                        
+            auto rem = *itr;
+            itr = oppositeSideOrders.erase(itr);
+            rem.o.qty -= trade_qty;
+            if(rem.o.qty)
+                oppositeSideOrders.insert(rem);
+        } else
+            break;
+    }
+
+    if(elt.o.qty)
+        sameSideOrders.insert(elt);
+}
+
+void matcher(FIFOQueueSPSC<OrderTS> *sequenced, vector<Trade> *trades, State *state, Order *orders) {
     int i=0;
 
-    set<OrderTS, MatchOrderComp> sellOrders;
-    set<OrderTS, MatchOrderComp> buyOrders;
-
+    set<OrderTS, OrderComp<less>> sellOrders;
+    set<OrderTS, OrderComp<greater>> buyOrders;
 
     while(true) {
         if(!sequenced->empty()) { 
@@ -119,9 +145,14 @@ void matcher(FIFOQueueSPSC<OrderTS> *sequenced, Trade *trades, State *state, Ord
             //assert(elt.o == orders[i]);
             if(!(elt.o == orders[i]))
                 cout << i << " " << elt.o.id << " " << orders[i].id << " " <<  elt.ts <<  endl;
-
-
             ++i;
+
+            if(elt.o.qty > 0) { // buy order
+                match_order(elt, sellOrders, buyOrders, *trades);
+            } else if(elt.o.qty < 0) { // sell order
+                elt.o.qty = abs(elt.o.qty);
+                match_order(elt, buyOrders, sellOrders, *trades);
+            }
         }
 
         if(state->sequencing_complete && sequenced->empty())
@@ -140,7 +171,9 @@ int main() {
         gateways[i] = new FIFOQueueSPSC<OrderTS>(GATEWAY_CAPACITY);
 
     FIFOQueueSPSC<OrderTS> *sequenced = new FIFOQueueSPSC<OrderTS>(SEQUENCED_CAPACITY);
-    Trade *trades = new Trade[TRADE_BUFSZ];
+    
+    vector<Trade> *trades = new vector<Trade>();
+    trades->reserve(TRADE_BUFSZ);
     
     Order *orders = new Order[TOTAL_ORDERS];
     for(int i=0; i<TOTAL_ORDERS; ++i) {
@@ -150,9 +183,7 @@ int main() {
 
 
     thread match(matcher, sequenced, trades, state, orders);
-
     thread sequence(sequencer, gateways, sequenced, state);
-
     thread dispatch(dispatch_orders, orders, gateways, state);
 
     dispatch.join();
@@ -163,15 +194,7 @@ int main() {
         cout << gateways[i]->mxsz << endl;
 
     cout << sequenced->mxsz << endl;
+    cout << trades->size() << endl;
 
     return 0;
-
-
-/*
-    ExchangeSimulator es;
-    es.initialize_gateways();
-    es.run_simulation();
-    cout << es.simulation_results << endl;
-    return 0;
-*/
 }

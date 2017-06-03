@@ -7,7 +7,7 @@ using namespace std;
 template <typename T>
 class FIFOQueueSPSC {
     T *store;
-    atomic<int> sz;
+    atomic<size_t> sz;
     size_t capacity;
     size_t head;
     size_t tail;
@@ -17,7 +17,7 @@ public:
     int mxsz;
 
     FIFOQueueSPSC()=default;
-    FIFOQueueSPSC(size_t cap):capacity(cap), store(new T[cap]), sz(0), head(0), tail(0), mxsz(0) {}
+    FIFOQueueSPSC(size_t cap):store(new T[cap]), sz(0), capacity(cap), head(0), tail(0), mxsz(0) {}
 
     ~FIFOQueueSPSC() {
         delete store;
