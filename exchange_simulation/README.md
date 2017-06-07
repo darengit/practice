@@ -7,6 +7,6 @@ simulate what an exchange does to handle orders:
 
 notes:
 
-* the most vexing syntax feature in C++ bites me again, Compi\<unsigned int> comp()
+* the most vexing syntax feature in C++ bites me again, Comp\<unsigned int> comp()
 * synchronization is really hard, hard to test
 * make the queue connecting sequencer and matcher one which can produce a whole buffer of output
