@@ -1,10 +1,8 @@
-#include <cunistd>
+#include <unistd.h>
 #include <vector>
 #include <thread>
 
-
 #include "spawningpool.h"
-
 
 using namespace std;
 
@@ -14,13 +12,18 @@ void sleep_for(int duration) {
 }
 
 void spawn_sleep(SpawningPool *sp, int spawn_count, int sleep_duration) {
-    vector<Spawn> spawns(spawn_count, Spawn(sleep_for,sleep_duration));
+    vector<Spawn *> spawns;
 
-    for(Spawn &s: spawns)
-        s.pool(sp);
+    for(int i=0; i<spawn_count; ++i)
+        spawns.push_back(new Spawn(sleep_for,sleep_duration));
 
-    for(Spawn &s: spawns)
-        s.wait_for_completion();
+    for(Spawn *s: spawns)
+        s->pool(sp);
+
+    for(Spawn *s: spawns) {
+        s->wait_for_completion();
+        delete s;
+    }
 
     return;
 }
