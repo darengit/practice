@@ -25,11 +25,12 @@ public:
     void run() {
         bound();
 
-        lock_guard<mutex> guard(m);
-        complete = true;
+        {
+            lock_guard<mutex> guard(m);
+            complete = true;
+        }
+        cv.notify_one();
     }
-
-    void pool(SpawningPool *sp);
 
     void wait_for_completion() {
         unique_lock<mutex> lk(m);
@@ -60,15 +61,16 @@ public:
                 queueCv.wait(lk, [this](){return !poolQueue.empty() || shutdown;});
             }
 
+            Spawn *s=NULL;
             {
                 lock_guard<mutex> guard(queueMutex);
                 if(!poolQueue.empty()) {
-                    Spawn *s = poolQueue.front();
+                    s = poolQueue.front();
                     poolQueue.pop();
-                    s->run();
                 }
             }
 
+            if(s) s->run();
         }
     }
 
@@ -91,7 +93,3 @@ public:
             t.join();
     }
 };
-
-void Spawn::pool(SpawningPool *sp) {
-    sp->push(this);
-}
