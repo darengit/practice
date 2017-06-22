@@ -2,4 +2,4 @@ This is an extremely simple threadpool implementation from my imagination using 
 
 to compile test run on linux:
 
-g++ -Wall -g -std=c++14 functional\_test.cpp -lp\_thread
+g++ -Wall -g -std=c++14 \<test script\>.cpp -lpthread

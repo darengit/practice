@@ -2,23 +2,18 @@
 #include <vector>
 #include <thread>
 
-#include "spawningpool.h"
+#include "spawning_pool.h"
 
 #include <iostream>
 
 using namespace std;
 
 void sleep_for(int duration) {
-
-cout << "sleeping for " << duration << endl;
     sleep(duration);
-cout << "waking up after " << duration << endl;
     return;
 }
 
 void spawn_sleep(SpawningPool *sp, int spawn_count, int sleep_duration) {
-cout << "spawn_sleep" << endl;    
-
     vector<Spawn *> spawns;
 
     for(int i=0; i<spawn_count; ++i)
@@ -31,7 +26,7 @@ cout << "spawn_sleep" << endl;
         s->wait_for_completion();
         delete s;
     }
-cout << "return from spawn_sleep" << endl;
+
     return;
 }
 
@@ -43,6 +38,8 @@ int main() {
 
     t1.join();
     t2.join();
+
+    cout << "slept for a total of 20 seconds on different threads from a pool of size 8" << endl;
 
     return 0;
 }
