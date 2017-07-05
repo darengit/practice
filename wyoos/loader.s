@@ -9,10 +9,12 @@
 
 .section .text
 .extern wyoosmain
+.extern callCtors
 .global loader
 
 loader:
     mov $stack_ptr, %esp
+    call callCtors
     push %eax
     push %ebx
     call wyoosmain
